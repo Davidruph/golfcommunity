@@ -68,7 +68,7 @@ a:hover .button-icon {
 
 /* Thin scrollbar styling */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 3px;
 }
 
 ::-webkit-scrollbar-track {
@@ -113,4 +113,60 @@ a:hover .button-icon {
   line-height: 170%;
   letter-spacing: 0%;
   text-align: center;
+}
+.testimonial-text {
+  font-family: var(--font-host-grotesk);
+  font-weight: 400;
+  line-height: 100%;
+  letter-spacing: -2%;
+  text-align: center;
+  color: #221103;
+}
+.testimonial-name {
+  font-family: var(--font-host-grotesk);
+  font-weight: 500;
+  font-size: 24px;
+  line-height: 110.00000000000001%;
+  letter-spacing: -4%;
+  text-align: center;
+  color: #404040;
+}
+.testimonial-location {
+  font-family: var(--font-host-grotesk);
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 160%;
+  letter-spacing: -1%;
+  text-align: center;
+  vertical-align: middle;
+}
+.notification-bar {
+  background: #808001;
+  font-family: var(--font-host-grotesk);
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 170%;
+  letter-spacing: 0%;
+  color: #ffffff;
+}
+
+/* Marquee Animation */
+@keyframes marquee {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(calc(-100% - 20px));
+  }
+}
+
+.marquee {
+  display: flex;
+  white-space: nowrap;
+  animation: marquee 15s linear infinite;
+}
+
+.marquee-text {
+  padding: 0 40px;
+  display: inline-block;
 }
