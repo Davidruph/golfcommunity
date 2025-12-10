@@ -10,11 +10,11 @@ export default function Home() {
     <>
       <NotificationBar />
       <section
-        className="w-full min-h-screen flex flex-col items-center bg-cover bg-center"
+        className="w-full min-h-screen flex justify-center bg-cover bg-center"
         style={{ backgroundImage: "url('/website/hero.jpg')" }}
       >
-        <div className="absolute z-10 w-full h-full flex items-end justify-start pb-32 pl-4 md:pl-8">
-          <div className="w-full max-w-[1260px] flex flex-col gap-6 md:gap-6 text-white">
+        <div className="relative z-10 w-full max-w-[1259px] flex items-end justify-start pb-32 pl-4 md:pl-8">
+          <div className="flex flex-col gap-6 md:gap-6 text-white">
             <h1 className="hero-text-lead text-[40px] md:text-[60px] lg:text-[88px]">
               Connecting Golfers. <br />
               <span>Empowering</span> Communities

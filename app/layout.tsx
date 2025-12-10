@@ -28,7 +28,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${hostGrotesk.variable} ${instrumentSerif.variable} antialiased w-full max-w-[1440px] min-h-screen mx-auto`}
+        className={`${hostGrotesk.variable} ${instrumentSerif.variable} antialiased w-full min-h-screen`}
       >
         <Nav />
         {children}
