@@ -170,3 +170,67 @@ a:hover .button-icon {
   padding: 0 40px;
   display: inline-block;
 }
+.hero-text-lead {
+  font-family: var(--font-host-grotesk);
+  font-weight: 500;
+  font-style: Medium;
+  line-height: 112.00000000000001%;
+  letter-spacing: -2px;
+  color: #ffffff;
+}
+.hero-text-lead span {
+  font-family: var(--font-instrument-serif);
+  font-weight: 400;
+  font-style: Italic;
+  line-height: 112.00000000000001%;
+  letter-spacing: -2px;
+  color: #f0ef2c;
+}
+.hero-description {
+  font-family: var(--font-host-grotesk);
+  font-weight: 400;
+  line-height: 170%;
+  letter-spacing: 0px;
+  color: #ffffff;
+}
+.partners-bg {
+  background: linear-gradient(270deg, rgba(238, 235, 229, 0) 0%, #eeebe5 100%);
+}
+.story-lead-text {
+  font-family: var(--font-host-grotesk);
+  font-weight: 500;
+  font-style: Medium;
+  font-size: 60px;
+  line-height: 112.00000000000001%;
+  letter-spacing: -1.2px;
+  color: #ffffff;
+}
+.story-lead-text span {
+  font-family: var(--font-instrument-serif);
+  font-weight: 400;
+  font-style: Italic;
+  font-size: 60px;
+  line-height: 112.00000000000001%;
+  letter-spacing: -1.2px;
+  color: #f1ef2d;
+}
+.story-title {
+  font-family: var(--font-host-grotesk);
+  font-weight: 500;
+  font-size: 13px;
+  line-height: 22px;
+  letter-spacing: 4px;
+  vertical-align: middle;
+  text-transform: uppercase;
+}
+.story-description {
+  font-family: var(--font-host-grotesk);
+  font-weight: 500;
+  font-size: 24px;
+  line-height: 140%;
+  letter-spacing: -0.5px;
+  color: #ffffff;
+}
+.story-description span {
+  color: #fed701;
+}
