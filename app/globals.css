@@ -1,26 +1,116 @@
 @import "tailwindcss";
-
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+html {
+  scroll-behavior: smooth;
 }
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+.login-btn {
+  font-family: var(--font-host-grotesk);
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 170%;
+  letter-spacing: 0px;
+  vertical-align: middle;
 }
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+.join-community-btn {
+  font-family: var(--font-host-grotesk);
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 170%;
+  letter-spacing: 0px;
+  vertical-align: middle;
+}
+.menu-links {
+  font-family: var(--font-host-grotesk);
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 170%;
+  letter-spacing: 0%;
+}
+@keyframes swing {
+  0% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(4px);
+  }
+  100% {
+    transform: translateX(0);
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+.button-icon {
+  display: inline-block;
+}
+
+a:hover .button-icon {
+  animation: swing 0.6s ease-in-out infinite;
+}
+
+/* Mobile Menu Animation */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.mobile-menu {
+  animation: slideDown 0.3s ease-out;
+}
+
+/* Nav Link Animations */
+.nav-link {
+  position: relative;
+}
+
+/* Thin scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+.footer-question {
+  font-family: var(--font-host-grotesk);
+  font-weight: 500;
+  line-height: 120%;
+  letter-spacing: -1.5px;
+  color: #0d1101;
+}
+.footer-question-follow-up {
+  font-family: var(--font-host-grotesk);
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 170%;
+  letter-spacing: 0px;
+}
+.join-community-now-btn {
+  font-family: var(--font-host-grotesk);
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 170%;
+  letter-spacing: 0px;
+  text-align: center;
+  vertical-align: middle;
+}
+.footer-copyright {
+  font-family: var(--font-host-grotesk);
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 170%;
+  letter-spacing: 0%;
+  text-align: center;
 }
