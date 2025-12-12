@@ -4,6 +4,7 @@ import Image from "next/image";
 import Button from "@/components/website/Button";
 import Partners from "@/components/website/Partners";
 import About from "@/components/website/About";
+import Rating from "@/components/website/Rating";
 
 export default function Home() {
   return (
@@ -54,6 +55,7 @@ export default function Home() {
 
       <Partners />
       <About />
+      <Rating />
       <Testimonial />
     </>
   );

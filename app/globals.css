@@ -200,7 +200,7 @@ a:hover .button-icon {
   font-family: var(--font-host-grotesk);
   font-weight: 500;
   font-style: Medium;
-  font-size: 60px;
+  /* font-size: 60px; */
   line-height: 112.00000000000001%;
   letter-spacing: -1.2px;
   color: #ffffff;
@@ -233,4 +233,57 @@ a:hover .button-icon {
 }
 .story-description span {
   color: #fed701;
+}
+.story-icon-text{
+  font-family: var(--font-host-grotesk);
+  font-weight: 500;
+  font-size: 24px;
+  line-height: 140%;
+  letter-spacing: -0.5px;
+  color: #FFFFFF;
+}
+.story-icon-description{
+  font-family: var(--font-host-grotesk);
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 170%;
+  letter-spacing: 0px;
+  color: #E6E6E6;
+}
+.story-bg-header{
+  font-family: var(--font-host-grotesk);
+font-weight: 500;
+font-style: Medium;
+font-size: 24px;
+line-height: 140%;
+letter-spacing: -0.5px;
+color: #FFFFFF;
+
+
+}
+.story-bg-desc{
+  font-family: var(--font-host-grotesk);
+font-weight: 400;
+font-size: 14px;
+line-height: 150%;
+letter-spacing: 0%;
+color: #FFFFFF;
+}
+.rating-active-golfers{
+  font-family: var(--font-host-grotesk);
+  font-weight: 500;
+  font-size: 72px;
+  line-height: 114.99999999999999%;
+  letter-spacing: -2px;
+  vertical-align: middle;
+  color: #000000;
+}
+.rating-title{
+  font-family: var(--font-host-grotesk);
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 170%;
+  letter-spacing: 0px;
+  vertical-align: middle;
+  color: #000000;
 }
