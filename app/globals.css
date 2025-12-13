@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 html {
   scroll-behavior: smooth;
 }
@@ -234,42 +234,40 @@ a:hover .button-icon {
 .story-description span {
   color: #fed701;
 }
-.story-icon-text{
+.story-icon-text {
   font-family: var(--font-host-grotesk);
   font-weight: 500;
   font-size: 24px;
   line-height: 140%;
   letter-spacing: -0.5px;
-  color: #FFFFFF;
+  color: #ffffff;
 }
-.story-icon-description{
+.story-icon-description {
   font-family: var(--font-host-grotesk);
   font-weight: 400;
   font-size: 16px;
   line-height: 170%;
   letter-spacing: 0px;
-  color: #E6E6E6;
+  color: #e6e6e6;
 }
-.story-bg-header{
+.story-bg-header {
   font-family: var(--font-host-grotesk);
-font-weight: 500;
-font-style: Medium;
-font-size: 24px;
-line-height: 140%;
-letter-spacing: -0.5px;
-color: #FFFFFF;
-
-
+  font-weight: 500;
+  font-style: Medium;
+  font-size: 24px;
+  line-height: 140%;
+  letter-spacing: -0.5px;
+  color: #ffffff;
 }
-.story-bg-desc{
+.story-bg-desc {
   font-family: var(--font-host-grotesk);
-font-weight: 400;
-font-size: 14px;
-line-height: 150%;
-letter-spacing: 0%;
-color: #FFFFFF;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 150%;
+  letter-spacing: 0%;
+  color: #ffffff;
 }
-.rating-active-golfers{
+.rating-active-golfers {
   font-family: var(--font-host-grotesk);
   font-weight: 500;
   font-size: 72px;
@@ -278,7 +276,7 @@ color: #FFFFFF;
   vertical-align: middle;
   color: #000000;
 }
-.rating-title{
+.rating-title {
   font-family: var(--font-host-grotesk);
   font-weight: 400;
   font-size: 18px;
@@ -286,4 +284,57 @@ color: #FFFFFF;
   letter-spacing: 0px;
   vertical-align: middle;
   color: #000000;
+}
+.community-header {
+  font-family: var(--font-host-grotesk);
+  font-weight: 500;
+  font-size: 48px;
+  line-height: 120%;
+  letter-spacing: -1.5px;
+  color: #0d1101;
+}
+.ommunity-text-desc {
+  font-family: var(--font-host-grotesk);
+  font-weight: 400;
+  font-style: Regular;
+  font-size: 18px;
+  line-height: 170%;
+  letter-spacing: 0px;
+  color: #474842;
+}
+.community-card-desc {
+  font-family: var(--font-host-grotesk);
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 170%;
+  letter-spacing: 0px;
+  text-align: center;
+  color: #f6f7f9;
+}
+.community-card-header {
+  font-family: var(--font-host-grotesk);
+  font-weight: 500;
+  font-size: 36px;
+  line-height: 130%;
+  letter-spacing: -1px;
+  text-align: center;
+  color: #ffffff;
+}
+.community-video-text {
+  font-family: var(--font-host-grotesk);
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 170%;
+  letter-spacing: 0px;
+  text-align: center;
+  color: #0d1101;
+}
+.steps-header {
+  font-family: var(--font-host-grotesk);
+  font-weight: 500;
+
+  font-size: 48px;
+  line-height: 120%;
+  letter-spacing: -1.5px;
+  color: #ffffff;
 }

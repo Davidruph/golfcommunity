@@ -1,10 +1,12 @@
-import Testimonial from "@/components/website/Testimonial";
-import NotificationBar from "@/components/website/NotificationBar";
-import Image from "next/image";
-import Button from "@/components/website/Button";
-import Partners from "@/components/website/Partners";
-import About from "@/components/website/About";
-import Rating from "@/components/website/Rating";
+import Testimonial from '@/components/website/Testimonial'
+import NotificationBar from '@/components/website/NotificationBar'
+import Image from 'next/image'
+import Button from '@/components/website/Button'
+import Partners from '@/components/website/Partners'
+import About from '@/components/website/About'
+import Rating from '@/components/website/Rating'
+import Community from '@/components/website/Community'
+import Steps from '@/components/website/Steps'
 
 export default function Home() {
   return (
@@ -22,8 +24,8 @@ export default function Home() {
             </h1>
 
             <p className="hero-description text-[16px] md:text-[20px]">
-              Join a growing network of passionate golfers shaping{" "}
-              <br className="hidden md:flex" /> the future of community golf.
+              Join a growing network of passionate golfers shaping <br className="hidden md:flex" />{' '}
+              the future of community golf.
             </p>
 
             <div className="flex flex-col md:flex-row gap-3 w-full">
@@ -56,7 +58,9 @@ export default function Home() {
       <Partners />
       <About />
       <Rating />
+      <Community />
+      <Steps />
       <Testimonial />
     </>
-  );
+  )
 }

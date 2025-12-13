@@ -2,7 +2,15 @@
 
 import { useEffect, useRef, useState } from 'react'
 
-const CountUpNumber = ({ end, duration = 2000, suffix = '' }: { end: number; duration?: number; suffix?: string }) => {
+const CountUpNumber = ({
+  end,
+  duration = 2000,
+  suffix = '',
+}: {
+  end: number
+  duration?: number
+  suffix?: string
+}) => {
   const [count, setCount] = useState(0)
   const countRef = useRef<HTMLParagraphElement>(null)
   const [isVisible, setIsVisible] = useState(false)
@@ -55,24 +63,24 @@ const CountUpNumber = ({ end, duration = 2000, suffix = '' }: { end: number; dur
 const Rating = () => {
   return (
     <section className="w-full bg-[#EEEBE5] border-t border-b border-[rgba(0, 0, 0, 0.16)]">
-        <div className="flex justify-center px-3">
-            <div className="w-full max-w-[1259px] py-6 text-white flex flex-col lg:flex-row items-center justify-center gap-5 lg:gap-0">
-                <div className="flex flex-col w-full items-center">
-                    <CountUpNumber end={500} suffix="+" />
-                    <p className="rating-title">Active Golfers</p>
-                </div>
+      <div className="flex justify-center px-3">
+        <div className="w-full max-w-[1259px] py-6 flex flex-col lg:flex-row items-center justify-center gap-5 lg:gap-0">
+          <div className="flex flex-col w-full items-center">
+            <CountUpNumber end={500} suffix="+" />
+            <p className="rating-title">Active Golfers</p>
+          </div>
 
-                <div className="flex flex-col w-full items-center border-b border-t md:border-l md:border-r border-black">
-                    <CountUpNumber end={50} suffix="+" />
-                    <p className="rating-title">Communities</p>
-                </div>
+          <div className="flex flex-col w-full items-center md:border-l md:border-r border-black">
+            <CountUpNumber end={50} suffix="+" />
+            <p className="rating-title">Communities</p>
+          </div>
 
-                <div className="flex flex-col w-full items-center">
-                    <CountUpNumber end={100} suffix="K+" />
-                    <p className="rating-title">Youth Funding</p>
-                </div>
-            </div>
+          <div className="flex flex-col w-full items-center">
+            <CountUpNumber end={100} suffix="K+" />
+            <p className="rating-title">Youth Funding</p>
+          </div>
         </div>
+      </div>
     </section>
   )
 }
