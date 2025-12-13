@@ -7,6 +7,8 @@ import About from '@/components/website/About'
 import Rating from '@/components/website/Rating'
 import Community from '@/components/website/Community'
 import Steps from '@/components/website/Steps'
+import Explore from '@/components/website/Explore'
+import Events from '@/components/website/Events'
 
 export default function Home() {
   return (
@@ -60,6 +62,8 @@ export default function Home() {
       <Rating />
       <Community />
       <Steps />
+      <Explore />
+      <Events />
       <Testimonial />
     </>
   )
