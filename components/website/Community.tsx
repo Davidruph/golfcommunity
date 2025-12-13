@@ -27,7 +27,7 @@ const Community = () => {
 
           <div className="flex flex-col md:flex-row gap-5 items-center justify-start mt-10 mb-5">
             <div
-              className="relative bg-cover bg-center w-full h-[672px] max-w-[684px]"
+              className="relative bg-cover bg-center w-full h-[672px] max-w-[684px] animate-slide-in-left hover:shadow-lg transition-shadow duration-300"
               style={{
                 backgroundImage:
                   "linear-gradient(181.38deg, rgba(13, 17, 1, 0) 46.7%, #0D1101 98.82%), url('/website/community3.jpg')",
@@ -53,7 +53,7 @@ const Community = () => {
             </div>
 
             <div
-              className="relative bg-cover bg-center w-full h-[672px] max-w-[684px]"
+              className="relative bg-cover bg-center w-full h-[672px] max-w-[684px] animate-slide-in-right hover:shadow-lg transition-shadow duration-300"
               style={{
                 backgroundImage:
                   "linear-gradient(181.38deg, rgba(13, 17, 1, 0) 46.7%, #0D1101 98.82%), url('/website/community4.jpg')",
@@ -81,7 +81,7 @@ const Community = () => {
 
           <div className="flex flex-col md:flex-row gap-5 items-center justify-start mb-5">
             <div
-              className="relative bg-cover bg-center w-full h-[672px] max-w-[684px]"
+              className="relative bg-cover bg-center w-full h-[672px] max-w-[684px] animate-slide-in-left hover:shadow-lg transition-shadow duration-300"
               style={{
                 backgroundImage:
                   "linear-gradient(181.38deg, rgba(13, 17, 1, 0) 46.7%, #0D1101 98.82%), url('/website/community5.jpg')",
@@ -108,7 +108,7 @@ const Community = () => {
             </div>
 
             <div
-              className="relative bg-cover bg-center w-full h-[672px] max-w-[684px]"
+              className="relative bg-cover bg-center w-full h-[672px] max-w-[684px] animate-slide-in-right hover:shadow-lg transition-shadow duration-300"
               style={{
                 backgroundImage:
                   "linear-gradient(181.38deg, rgba(13, 17, 1, 0) 46.7%, #0D1101 98.82%), url('/website/community6.jpg')",

@@ -27,11 +27,11 @@ const Explore = () => {
           </div>
 
           <div className="flex flex-col w-full mt-14 pb-15">
-            <div className="group flex justify-between items-center h-[164px]">
+            <div className="group flex justify-between items-center h-[164px] cursor-pointer transition-colors duration-300 animate-slide-in-up">
               <div className="flex gap-14 items-center">
                 <Image src="/website/exploreimage1.svg" alt="explore 1" width={151} height={132} />
 
-                <p className="explore-top-count group-hover:text-white">
+                <p className="explore-top-count group-hover:text-white transition-colors duration-300">
                   01 // <span>Sam Lee</span>
                 </p>
               </div>
@@ -47,15 +47,21 @@ const Explore = () => {
               </div>
               <div className="gap-2 items-center hidden lg:flex">
                 <Image src="/website/explorecrown.svg" alt="crown" width={28} height={28} />
-                <span className="explore-points group-hover:text-white"> 180 pts</span>
+                <span className="explore-points group-hover:text-white transition-colors duration-300">
+                  {' '}
+                  180 pts
+                </span>
               </div>
             </div>
 
-            <div className="group flex justify-between items-center bg-black h-[164px]">
+            <div
+              className="group flex justify-between items-center bg-black h-[164px] hover:bg-opacity-80 cursor-pointer transition-colors duration-300 animate-slide-in-up"
+              style={{ animationDelay: '0.1s' }}
+            >
               <div className="flex gap-14 items-center">
                 <Image src="/website/exploreimage2.svg" alt="explore 2" width={151} height={132} />
 
-                <p className="explore-top-counts group-hover:text-white">
+                <p className="explore-top-counts group-hover:text-white transition-colors duration-300">
                   01 // <span className="text-white">Jasmine Clark</span>
                 </p>
               </div>

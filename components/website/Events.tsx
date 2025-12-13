@@ -49,9 +49,12 @@ const Events = () => {
             </div>
 
             <div className="flex flex-col gap-5 w-full">
-              {events.map((event) => (
-                <div className="flex justify-between h-[74.00006103515625px] relative group">
-                  <p key={event.id} className="events-title">
+              {events.map((event, index) => (
+                <div
+                  key={event.id}
+                  className={`flex justify-between h-[74.00006103515625px] relative group stagger-item-${(index % 4) + 1}`}
+                >
+                  <p className="events-title">
                     {event.id}. {event.title}
                   </p>
                   <Button
