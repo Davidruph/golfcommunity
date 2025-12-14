@@ -62,7 +62,7 @@ const CountUpNumber = ({
 
 const Rating = () => {
   return (
-    <section className="w-full bg-[#EEEBE5] border-t border-b border-[rgba(0, 0, 0, 0.16)]">
+    <section className="w-full bg-[#EEEBE5] border-t border-b border-[#EEEBE5]">
       <div className="flex justify-center px-3">
         <div className="w-full max-w-[1259px] py-6 flex flex-col lg:flex-row items-center justify-center gap-5 lg:gap-0">
           <div className="flex flex-col w-full items-center">

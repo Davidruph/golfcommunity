@@ -1,16 +1,16 @@
-"use client";
-import Image from "next/image";
-import Button from "./Button";
-import Link from "next/link";
-import { useState } from "react";
-import { FaBars, FaTimes } from "react-icons/fa";
+'use client'
+import Image from 'next/image'
+import Button from './Button'
+import Link from 'next/link'
+import { useState } from 'react'
+import { FaBars, FaTimes } from 'react-icons/fa'
 
 const Nav = () => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false)
 
   const toggleMenu = () => {
-    setIsOpen(!isOpen);
-  };
+    setIsOpen(!isOpen)
+  }
 
   return (
     <section className="bg-[#EEEBE5] p-5 sticky top-0 z-50 flex justify-center">
@@ -29,21 +29,21 @@ const Nav = () => {
           {/* Desktop Menu */}
           <nav className="hidden lg:flex gap-8 menu-links text-[#52582E]">
             <Link
-              href="#"
+              href="/"
               className="nav-link transition-all duration-300 hover:text-[#000000] relative group"
             >
               Home
               <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#000000] transition-all duration-300 group-hover:w-full"></span>
             </Link>
             <Link
-              href="#"
+              href="/about"
               className="nav-link transition-all duration-300 hover:text-[#000000] relative group"
             >
               About
               <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#000000] transition-all duration-300 group-hover:w-full"></span>
             </Link>
             <Link
-              href="#"
+              href="/membership"
               className="nav-link transition-all duration-300 hover:text-[#000000] relative group"
             >
               Membership
@@ -97,21 +97,21 @@ const Nav = () => {
           <div className="absolute top-full left-0 right-0 bg-[#EEEBE5] border-t border-[#52582E] shadow-lg mobile-menu">
             <nav className="flex flex-col gap-4 p-6 menu-links text-[#52582E]">
               <Link
-                href="#"
+                href="/"
                 className="nav-link py-2 px-4 transition-all duration-300 hover:bg-[#D4D0CB] rounded-lg hover:pl-6"
                 onClick={() => setIsOpen(false)}
               >
                 Home
               </Link>
               <Link
-                href="#"
+                href="/about"
                 className="nav-link py-2 px-4 transition-all duration-300 hover:bg-[#D4D0CB] rounded-lg hover:pl-6"
                 onClick={() => setIsOpen(false)}
               >
                 About
               </Link>
               <Link
-                href="#"
+                href="/membership"
                 className="nav-link py-2 px-4 transition-all duration-300 hover:bg-[#D4D0CB] rounded-lg hover:pl-6"
                 onClick={() => setIsOpen(false)}
               >
@@ -152,7 +152,7 @@ const Nav = () => {
         )}
       </div>
     </section>
-  );
-};
+  )
+}
 
-export default Nav;
+export default Nav

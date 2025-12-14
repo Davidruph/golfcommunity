@@ -554,3 +554,104 @@ a:hover .button-icon {
   animation-delay: 0.4s;
   opacity: 0;
 }
+.why-header {
+  font-family: var(--font-host-grotesk);
+  font-weight: 500;
+  font-size: 60px;
+  line-height: 104%;
+  letter-spacing: -2px;
+  color: #03040b;
+}
+.why-description {
+  font-family: var(--font-host-grotesk);
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 160%;
+  letter-spacing: 0px;
+  color: #535358;
+}
+.mission-head {
+  font-family: var(--font-host-grotesk);
+  font-weight: 400;
+  font-size: 24px;
+  line-height: 140%;
+  letter-spacing: -0.5px;
+  color: #03040b;
+}
+.mission-desc {
+  font-family: var(--font-host-grotesk);
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 160%;
+  letter-spacing: 0px;
+  color: #535358;
+}
+.mission-head-main {
+  font-family: var(--font-host-grotesk);
+  font-weight: 400;
+  font-size: 20px;
+  line-height: 170%;
+  letter-spacing: 0px;
+  text-align: center;
+  color: #0d1101;
+}
+.mission-desc-main {
+  font-family: var(--font-host-grotesk);
+  font-weight: 500;
+  font-size: 36px;
+  line-height: 140%;
+  letter-spacing: -0.5px;
+  text-align: center;
+  vertical-align: middle;
+  color: #0d1101;
+}
+.about-steps-card-title {
+  font-family: var(--font-host-grotesk);
+  font-weight: 500;
+  font-size: 20px;
+  line-height: 170%;
+  letter-spacing: 0px;
+  color: #fe532c;
+}
+.about-steps-card-desc {
+  font-family: var(--font-host-grotesk);
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 170%;
+  letter-spacing: 0px;
+  color: #0f0f0f;
+}
+.steps-works-desc {
+  font-family: var(--font-host-grotesk);
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 160%;
+  letter-spacing: 0px;
+  text-align: center;
+  color: #fff;
+}
+.works-card-text {
+  font-family: var(--font-host-grotesk);
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 160%;
+  letter-spacing: 0px;
+  text-align: center;
+  color: #535358;
+}
+.future-head {
+  font-family: var(--font-host-grotesk);
+  font-weight: 500;
+  font-size: 48px;
+  line-height: 120%;
+  letter-spacing: -1.5px;
+  color: #0d1101;
+}
+.future-desc {
+  font-family: var(--font-host-grotesk);
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 170%;
+  letter-spacing: 0px;
+  color: #474842;
+}
