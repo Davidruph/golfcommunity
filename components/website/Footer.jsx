@@ -1,8 +1,8 @@
-import Image from "next/image";
-import Button from "./Button";
-import Link from "next/link";
-import { FaFacebookF, FaLinkedinIn } from "react-icons/fa";
-import { FaXTwitter } from "react-icons/fa6";
+import Image from 'next/image'
+import Button from './Button'
+import Link from 'next/link'
+import { FaFacebookF, FaLinkedinIn } from 'react-icons/fa'
+import { FaXTwitter } from 'react-icons/fa6'
 
 const Footer = () => {
   return (
@@ -20,13 +20,10 @@ const Footer = () => {
           {/* Middle Content Div */}
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="bg-white w-full max-w-[410px] p-5 md:p-8 flex flex-col gap-5">
-              <h2 className="footer-question text-[30px] md:text-[48px]">
-                Ready to connect?
-              </h2>
+              <h2 className="footer-question text-[30px] md:text-[48px]">Ready to connect?</h2>
 
               <p className="footer-question-follow-up">
-                We connect players, build local communities, and support youth
-                golf development.
+                We connect players, build local communities, and support youth golf development.
               </p>
 
               <Button
@@ -57,9 +54,9 @@ const Footer = () => {
                 />
               </Link>
               <p className="footer-question-follow-up">
-                Golf4Community is a platform built for golfers who believe the
-                game is bigger than a scorecard. We connect players, grow local
-                communities, and empower youth through the love of golf
+                Golf4Community is a platform built for golfers who believe the game is bigger than a
+                scorecard. We connect players, grow local communities, and empower youth through the
+                love of golf
               </p>
               <div className="flex gap-4">
                 <Link
@@ -88,28 +85,28 @@ const Footer = () => {
             <div className="flex flex-col md:flex-row gap-8 lg:gap-16 mt-8 md:mt-0">
               <nav className="flex flex-col gap-6 menu-links text-[#52582E] items-start">
                 <Link
-                  href="#"
+                  href="/"
                   className="nav-link transition-all duration-300 hover:text-[#000000] relative group"
                 >
                   Home
                   <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#000000] transition-all duration-300 group-hover:w-full"></span>
                 </Link>
                 <Link
-                  href="#"
+                  href="/about"
                   className="nav-link transition-all duration-300 hover:text-[#000000] relative group"
                 >
                   About
                   <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#000000] transition-all duration-300 group-hover:w-full"></span>
                 </Link>
                 <Link
-                  href="#"
+                  href="/membership"
                   className="nav-link transition-all duration-300 hover:text-[#000000] relative group"
                 >
                   Membership
                   <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#000000] transition-all duration-300 group-hover:w-full"></span>
                 </Link>
                 <Link
-                  href="#"
+                  href="/contact"
                   className="nav-link transition-all duration-300 hover:text-[#000000] relative group"
                 >
                   Contact
@@ -144,7 +141,7 @@ const Footer = () => {
         </p>
       </div>
     </section>
-  );
-};
+  )
+}
 
-export default Footer;
+export default Footer
