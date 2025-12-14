@@ -3,10 +3,12 @@ import Image from 'next/image'
 import Button from './Button'
 import Link from 'next/link'
 import { useState } from 'react'
+import { usePathname } from 'next/navigation'
 import { FaBars, FaTimes } from 'react-icons/fa'
 
 const Nav = () => {
   const [isOpen, setIsOpen] = useState(false)
+  const pathname = usePathname()
 
   const toggleMenu = () => {
     setIsOpen(!isOpen)
@@ -30,31 +32,55 @@ const Nav = () => {
           <nav className="hidden lg:flex gap-8 menu-links text-[#52582E]">
             <Link
               href="/"
-              className="nav-link transition-all duration-300 hover:text-[#000000] relative group"
+              className={`nav-link transition-all duration-300 relative group ${
+                pathname === '/' ? 'text-[#000000]' : 'hover:text-[#000000]'
+              }`}
             >
               Home
-              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#000000] transition-all duration-300 group-hover:w-full"></span>
+              <span
+                className={`absolute bottom-0 left-0 h-0.5 bg-[#000000] transition-all duration-300 ${
+                  pathname === '/' ? 'w-full' : 'w-0 group-hover:w-full'
+                }`}
+              ></span>
             </Link>
             <Link
               href="/about"
-              className="nav-link transition-all duration-300 hover:text-[#000000] relative group"
+              className={`nav-link transition-all duration-300 relative group ${
+                pathname === '/about' ? 'text-[#000000]' : 'hover:text-[#000000]'
+              }`}
             >
               About
-              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#000000] transition-all duration-300 group-hover:w-full"></span>
+              <span
+                className={`absolute bottom-0 left-0 h-0.5 bg-[#000000] transition-all duration-300 ${
+                  pathname === '/about' ? 'w-full' : 'w-0 group-hover:w-full'
+                }`}
+              ></span>
             </Link>
             <Link
               href="/membership"
-              className="nav-link transition-all duration-300 hover:text-[#000000] relative group"
+              className={`nav-link transition-all duration-300 relative group ${
+                pathname === '/membership' ? 'text-[#000000]' : 'hover:text-[#000000]'
+              }`}
             >
               Membership
-              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#000000] transition-all duration-300 group-hover:w-full"></span>
+              <span
+                className={`absolute bottom-0 left-0 h-0.5 bg-[#000000] transition-all duration-300 ${
+                  pathname === '/membership' ? 'w-full' : 'w-0 group-hover:w-full'
+                }`}
+              ></span>
             </Link>
             <Link
-              href="#"
-              className="nav-link transition-all duration-300 hover:text-[#000000] relative group"
+              href="/contact"
+              className={`nav-link transition-all duration-300 relative group ${
+                pathname === '/contact' ? 'text-[#000000]' : 'hover:text-[#000000]'
+              }`}
             >
               Contact
-              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#000000] transition-all duration-300 group-hover:w-full"></span>
+              <span
+                className={`absolute bottom-0 left-0 h-0.5 bg-[#000000] transition-all duration-300 ${
+                  pathname === '/contact' ? 'w-full' : 'w-0 group-hover:w-full'
+                }`}
+              ></span>
             </Link>
           </nav>
         </div>
@@ -98,28 +124,36 @@ const Nav = () => {
             <nav className="flex flex-col gap-4 p-6 menu-links text-[#52582E]">
               <Link
                 href="/"
-                className="nav-link py-2 px-4 transition-all duration-300 hover:bg-[#D4D0CB] rounded-lg hover:pl-6"
+                className={`nav-link py-2 px-4 transition-all duration-300 rounded-lg ${
+                  pathname === '/' ? 'bg-[#D4D0CB] pl-6' : 'hover:bg-[#D4D0CB] hover:pl-6'
+                }`}
                 onClick={() => setIsOpen(false)}
               >
                 Home
               </Link>
               <Link
                 href="/about"
-                className="nav-link py-2 px-4 transition-all duration-300 hover:bg-[#D4D0CB] rounded-lg hover:pl-6"
+                className={`nav-link py-2 px-4 transition-all duration-300 rounded-lg ${
+                  pathname === '/about' ? 'bg-[#D4D0CB] pl-6' : 'hover:bg-[#D4D0CB] hover:pl-6'
+                }`}
                 onClick={() => setIsOpen(false)}
               >
                 About
               </Link>
               <Link
                 href="/membership"
-                className="nav-link py-2 px-4 transition-all duration-300 hover:bg-[#D4D0CB] rounded-lg hover:pl-6"
+                className={`nav-link py-2 px-4 transition-all duration-300 rounded-lg ${
+                  pathname === '/membership' ? 'bg-[#D4D0CB] pl-6' : 'hover:bg-[#D4D0CB] hover:pl-6'
+                }`}
                 onClick={() => setIsOpen(false)}
               >
                 Membership
               </Link>
               <Link
-                href="#"
-                className="nav-link py-2 px-4 transition-all duration-300 hover:bg-[#D4D0CB] rounded-lg hover:pl-6"
+                href="/contact"
+                className={`nav-link py-2 px-4 transition-all duration-300 rounded-lg ${
+                  pathname === '/contact' ? 'bg-[#D4D0CB] pl-6' : 'hover:bg-[#D4D0CB] hover:pl-6'
+                }`}
                 onClick={() => setIsOpen(false)}
               >
                 Contact

@@ -655,3 +655,84 @@ a:hover .button-icon {
   letter-spacing: 0px;
   color: #474842;
 }
+.contact-header {
+  font-family: var(--font-host-grotesk);
+  font-weight: 600;
+  font-size: 72px;
+  line-height: 114.99999999999999%;
+  letter-spacing: -2px;
+  color: #0d1101;
+}
+.contact-desc {
+  font-family: var(--font-host-grotesk);
+  font-weight: 400;
+  font-style: Regular;
+  font-size: 16px;
+  line-height: 170%;
+  letter-spacing: 0px;
+  color: #474842;
+}
+.contact-btn {
+  height: 55px;
+  opacity: 1;
+  gap: 16px;
+  padding-top: 16px;
+  padding-right: 22px;
+  padding-bottom: 16px;
+  padding-left: 22px;
+  background-color: #ffd700;
+  font-family: var(--font-host-grotesk);
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 170%;
+  letter-spacing: 0%;
+  text-align: center;
+  vertical-align: middle;
+}
+.contact-mail-title {
+  font-family: var(--font-host-grotesk);
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 170%;
+  letter-spacing: 0px;
+  color: #474842;
+}
+.contact-mail-desc {
+  font-family: var(--font-host-grotesk);
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 170%;
+  letter-spacing: 0px;
+  color: #0d1101;
+}
+.faq-header {
+  font-family: var(--font-host-grotesk);
+  font-weight: 500;
+  font-size: 48px;
+  line-height: 120%;
+  letter-spacing: -1.5px;
+  color: #0d1101;
+}
+.faq-desc {
+  font-family: var(--font-host-grotesk);
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 170%;
+  letter-spacing: 0px;
+  color: #474842;
+}
+.faq-accordion-question {
+  font-family: var(--font-host-grotesk);
+  font-weight: 500;
+  line-height: 170%;
+  letter-spacing: 0px;
+  color: #fff;
+}
+.faq-accordion-answer {
+  font-family: var(--font-host-grotesk);
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 170%;
+  letter-spacing: 0px;
+  color: #fff;
+}
