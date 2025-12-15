@@ -1,8 +1,8 @@
-import Image from "next/image";
+import Image from 'next/image'
 
 const Partners = () => {
   return (
-    <section className="hidden w-full partners-bg h-[100px] md:flex items-center justify-center overflow-hidden">
+    <section className="bg-[#EEEBE5] hidden w-full partners-bg h-[100px] md:flex items-center justify-center overflow-hidden">
       <div className="marquee flex items-center">
         <span className="marquee-text">
           <Image
@@ -62,7 +62,7 @@ const Partners = () => {
         </span>
       </div>
     </section>
-  );
-};
+  )
+}
 
-export default Partners;
+export default Partners

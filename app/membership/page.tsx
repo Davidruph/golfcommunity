@@ -33,8 +33,10 @@ const Membership = () => {
       </section>
 
       <section className="bg-[#EEEBE5]">
-        <div className="flex flex-col items-center justify-center my-20">
-          <p className="mission-head-main">Our Mission</p>
+        <div className="flex flex-col items-center justify-center py-20">
+          <p className="mission-head-main bg-white rounded-[100px] py-2 px-[22px] mb-5">
+            Our Mission
+          </p>
           <p className="mission-desc-main">
             Our mission is to strengthen communities through golf by creating{' '}
             <br className="hidden lg:flex" />
@@ -49,7 +51,7 @@ const Membership = () => {
         <Rating />
 
         <div className="flex flex-col items-center justify-center">
-          <div className="w-full max-w-[1260px] relative aspect-video mt-20">
+          <div className="w-full max-w-[1260px] relative aspect-video my-22">
             <Image
               src="/website/explore-bg.png"
               alt="Footer Background"
@@ -86,8 +88,8 @@ const Membership = () => {
         </div>
       </section>
 
-      <section className="bg-[#0F0F0F] my-20">
-        <div className="mt-25 items-center justify-center flex flex-col">
+      <section className="bg-[#0F0F0F]">
+        <div className="items-center justify-center flex flex-col">
           <p className="steps-header mb-3 mt-20">How G4C Works</p>
           <p className="steps-works-desc">
             G4C makes golf accessible and engaging through a simple, community-driven approach.

@@ -1,6 +1,5 @@
 import Testimonial from '@/components/website/Testimonial'
 import NotificationBar from '@/components/website/NotificationBar'
-import Image from 'next/image'
 import Button from '@/components/website/Button'
 import Partners from '@/components/website/Partners'
 import About from '@/components/website/About'

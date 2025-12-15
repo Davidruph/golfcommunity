@@ -37,7 +37,7 @@ const About = () => {
       <Rating />
       <Why />
 
-      <section className="w-full bg-[#0F0F0F] -mt-55 mb-10">
+      <section className="w-full bg-[#0F0F0F] -mt-55 pb-10">
         <div className="flex justify-center px-3">
           <div className="w-full max-w-[1259px] py-20 flex flex-col mt-30">
             <p className="steps-header">What We Stand For</p>
@@ -132,44 +132,44 @@ const About = () => {
         </div>
       </section>
 
-      <div className="flex flex-col items-center justify-center">
-        <div className="w-full max-w-[1260px] relative aspect-video mt-20">
-          <Image
-            src="/website/explore-bg.png"
-            alt="Footer Background"
-            fill
-            className="w-full h-full object-cover"
-            priority
-            loading="eager"
-          />
-          {/* Middle Content Div */}
-          <div className="absolute bottom-10 right-10 flex items-center justify-center">
-            <div className="bg-white w-full max-w-[580px] p-5 md:p-8 flex flex-col gap-5">
-              <h2 className="footer-question text-[30px] md:text-[48px]">Sponsor Youth Golf</h2>
+      <section className="w-full bg-[#EEEBE5] py-20">
+        <div className="flex flex-col items-center justify-center">
+          <div className="w-full max-w-[1260px] relative aspect-video py-20">
+            <Image
+              src="/website/explore-bg.png"
+              alt="Footer Background"
+              fill
+              className="w-full h-full object-cover"
+              priority
+              loading="eager"
+            />
+            {/* Middle Content Div */}
+            <div className="absolute bottom-10 right-10 flex items-center justify-center">
+              <div className="bg-white w-full max-w-[580px] p-5 md:p-8 flex flex-col gap-5">
+                <h2 className="footer-question text-[30px] md:text-[48px]">Sponsor Youth Golf</h2>
 
-              <p className="footer-question-follow-up">
-                Support the next generation of golfers. Your sponsorship helps kids experience the
-                joy and opportunity of playing golf. When you sponsor a child, you help provide
-                equipment, coaching, and tournament access for deserving young athletes. Every
-                contribution makes an impact.
-              </p>
+                <p className="footer-question-follow-up">
+                  Support the next generation of golfers. Your sponsorship helps kids experience the
+                  joy and opportunity of playing golf. When you sponsor a child, you help provide
+                  equipment, coaching, and tournament access for deserving young athletes. Every
+                  contribution makes an impact.
+                </p>
 
-              <Button
-                href="#"
-                label="Sponsor Today"
-                width="186px"
-                borderColor="#FFD700"
-                backgroundColor="#FFD700"
-                textColor="#0D1101"
-                height="59px"
-                className="join-community-now-btn"
-              />
+                <Button
+                  href="#"
+                  label="Sponsor Today"
+                  width="186px"
+                  borderColor="#FFD700"
+                  backgroundColor="#FFD700"
+                  textColor="#0D1101"
+                  height="59px"
+                  className="join-community-now-btn"
+                />
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <section className="w-full bg-[#EEEBE5] my-15">
         <div className="flex justify-center px-3">
           <div className="w-full max-w-[1259px] py-20 flex flex-col">
             <div className="flex flex-col lg:flex-row items-center justify-center gap-10">

@@ -6,7 +6,7 @@ import { FaXTwitter } from 'react-icons/fa6'
 
 const Footer = () => {
   return (
-    <section className="w-full bg-[#EEEBE5] pt-10 pb-6 flex flex-col items-center">
+    <section className="w-full bg-[#EEEBE5] pt-20 pb-6 flex flex-col items-center">
       <div className="w-full flex flex-col items-center px-3">
         <div className="w-full max-w-[1260px] relative aspect-video">
           <Image

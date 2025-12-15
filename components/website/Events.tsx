@@ -33,7 +33,7 @@ const Events = () => {
   ]
 
   return (
-    <section className="w-full bg-[#000000] my-5">
+    <section className="w-full bg-[#000000] py-5">
       <div className="flex justify-center px-3">
         <div className="w-full max-w-[1259px] py-20 flex flex-col gap-8">
           <p className="events-header">

@@ -18,34 +18,34 @@ const Contact = () => {
             </p>
           </div>
 
-          <div className="w-full">
-            <form className="w-full flex flex-col gap-10">
-              <div className="flex flex-col gap-10 w-full lg:flex-row lg:gap-4">
+          <div className="w-full bg-[#FFFFFF] p-4 md:p-10">
+            <form className="w-full flex flex-col gap-8">
+              <div className="flex flex-col gap-8 w-full lg:flex-row lg:gap-4">
                 <input
                   type="text"
                   placeholder="First Name"
-                  className="flex-1 bg-transparent focus:border-b focus:border-b-[#000000] outline-none px-2 py-2 transition-colors duration-300 w-full"
+                  className="flex-1 bg-transparent border border-[#4748421F] h-14 rounded-lg outline-none px-2 py-2 transition-colors duration-300 w-full"
                 />
                 <input
                   type="text"
                   placeholder="Last Name"
-                  className="flex-1 bg-transparent focus:border-b focus:border-b-[#000000] outline-none px-2 py-2 transition-colors duration-300 w-full"
+                  className="flex-1 bg-transparent border border-[#4748421F] h-14 rounded-lg outline-none px-2 py-2 transition-colors duration-300 w-full"
                 />
               </div>
               <input
                 type="text"
                 placeholder="Phone"
-                className="bg-transparent focus:border-b focus:border-b-[#000000] outline-none px-2 py-2 transition-colors duration-300"
+                className="bg-transparent border border-[#4748421F] h-14 rounded-lg outline-none px-2 py-2 transition-colors duration-300"
               />
               <input
                 type="text"
                 placeholder="Email Address"
-                className="bg-transparent focus:border-b focus:border-b-[#000000] outline-none px-2 py-2 transition-colors duration-300"
+                className="bg-transparent border border-[#4748421F] h-14 rounded-lg outline-none px-2 py-2 transition-colors duration-300"
               />
 
               <textarea
                 placeholder="Write your requirement"
-                className="bg-transparent focus:border-b focus:border-b-[#000000] outline-none px-2 py-2 transition-colors duration-300 resize-none"
+                className="bg-transparent border border-[#4748421F] rounded-lg h-[113px] outline-none px-2 py-2 transition-colors duration-300 resize-none"
               />
               <button className="contact-btn w-full">Subscribe Now</button>
             </form>
@@ -53,7 +53,7 @@ const Contact = () => {
         </div>
 
         <div className="w-full flex flex-col md:flex-row justify-center items-center mt-30 gap-10">
-          <div className="flex flex-col w-full gap-8 max-w-[404px]">
+          <div className="flex flex-col w-full gap-8 max-w-[404px] bg-white p-5 h-[183px] justify-between">
             <IoMail size={24} />
             <div className="flex flex-col gap-1">
               <p className="contact-mail-title">Mail us here</p>
@@ -61,7 +61,7 @@ const Contact = () => {
             </div>
           </div>
 
-          <div className="flex flex-col w-full gap-8 max-w-[404px]">
+          <div className="flex flex-col w-full gap-8 max-w-[404px] bg-white p-8 h-[183px] justify-between">
             <ImLocation size={24} />
             <div className="flex flex-col gap-1">
               <p className="contact-mail-title">Our Address</p>
@@ -69,7 +69,7 @@ const Contact = () => {
             </div>
           </div>
 
-          <div className="flex flex-col w-full gap-8 max-w-[404px]">
+          <div className="flex flex-col w-full gap-8 max-w-[404px] bg-white p-8 h-[183px] justify-between">
             <IoCall size={24} />
             <div className="flex flex-col gap-1">
               <p className="contact-mail-title">Phone</p>
