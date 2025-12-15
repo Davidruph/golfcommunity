@@ -41,7 +41,7 @@ const Events = () => {
             Tournaments
           </p>
 
-          <div className="flex justify-between w-full mt-10">
+          <div className="flex flex-col gap-5 lg:flex-row justify-between w-full mt-10">
             <div className="flex flex-col gap-4 w-full">
               <Image src="/website/eventimage.svg" alt="Event Image" width={326} height={411} />
 
