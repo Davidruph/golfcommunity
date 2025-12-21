@@ -22,18 +22,23 @@ const rootReducer = combineReducers({
 
 type RootReducerState = ReturnType<typeof rootReducer>
 
+const transforms =
+  typeof window !== 'undefined'
+    ? [
+        encryptTransform({
+          secretKey: process.env.NEXT_PUBLIC_ENCRYPT_KEY || '',
+          onError: function (error) {
+            console.log(error)
+          },
+        }),
+      ]
+    : []
+
 const persistConfig: PersistConfig<RootReducerState> = {
   key: 'root',
   storage,
   version: 1,
-  transforms: [
-    encryptTransform({
-      secretKey: process.env.NEXT_PUBLIC_ENCRYPT_KEY || '',
-      onError: function (error) {
-        console.log(error)
-      },
-    }),
-  ],
+  transforms,
   blacklist: [apiSlice.reducerPath],
 }
 
