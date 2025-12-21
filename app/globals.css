@@ -736,3 +736,52 @@ a:hover .button-icon {
   letter-spacing: 0px;
   color: #fff;
 }
+
+/* auth styles begin */
+
+.auth-header {
+  font-family: var(--font-geist);
+  font-weight: 500;
+  font-size: 24px;
+  line-height: 100%;
+  letter-spacing: 0%;
+}
+.auth-label {
+  font-family: var(--font-geist);
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 100%;
+  letter-spacing: 0%;
+}
+.auth-input::placeholder {
+  font-family: var(--font-geist);
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 100%;
+  letter-spacing: 0%;
+  color: #00000099;
+}
+.auth-question {
+  font-family: var(--font-geist);
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 100%;
+  letter-spacing: 0%;
+}
+.auth-submit {
+  opacity: 1;
+  background-color: #069769;
+  box-shadow: 0px 6px 14px 0px #0000000f;
+  box-shadow: 0px 26px 26px 0px #0000000d;
+  box-shadow: 0px 58px 35px 0px #00000008;
+  box-shadow: 0px 103px 41px 0px #00000003;
+  box-shadow: 0px 161px 45px 0px #00000000;
+  box-shadow: 0px 4px 4px 0px #ffffff66 inset;
+  font-family: var(--font-geist);
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 0%;
+  color: white;
+  cursor: pointer;
+}

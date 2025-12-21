@@ -6,5 +6,5 @@ export const metadata: Metadata = {
 }
 
 export default function LoginLayout({ children }: { children: React.ReactNode }) {
-  return <main className="antialiased w-full min-h-screen">{children}</main>
+  return <section className="antialiased w-full p-3">{children}</section>
 }
