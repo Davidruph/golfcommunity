@@ -106,17 +106,17 @@ const Explore = () => {
             </div>
           </div>
 
-          <div className="w-full max-w-[1260px] relative aspect-video mt-20">
+          <div className="w-full max-w-[1260px] relative aspect-video mt-5 md:mt-20 mb-28 md:mb-0">
             <Image
               src="/website/explore-bg.png"
               alt="Footer Background"
               fill
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover hidden md:block"
               priority
               loading="eager"
             />
             {/* Middle Content Div */}
-            <div className="absolute bottom-10 right-10 flex items-center justify-center">
+            <div className="absolute md:bottom-10 md:right-10 flex items-center justify-center">
               <div className="bg-white w-full max-w-[580px] p-5 md:p-8 flex flex-col gap-5">
                 <h2 className="footer-question text-[30px] md:text-[48px]">Sponsor Youth Golf</h2>
 

@@ -88,7 +88,7 @@ const Nav = () => {
         {/* Desktop Buttons */}
         <div className="hidden lg:flex gap-3 items-center">
           <Button
-            href="#"
+            href="/login"
             label="Login"
             width="102px"
             borderColor="#474842"
@@ -99,7 +99,7 @@ const Nav = () => {
           />
 
           <Button
-            href="#"
+            href="/create-account"
             label="Join a community"
             width="206px"
             borderColor="#000000"
@@ -160,7 +160,7 @@ const Nav = () => {
               </Link>
               <div className="flex flex-col gap-2 pt-4 border-t border-[#52582E]">
                 <Button
-                  href="#"
+                  href="/login"
                   label="Login"
                   width="100%"
                   borderColor="#474842"
@@ -171,7 +171,7 @@ const Nav = () => {
                 />
 
                 <Button
-                  href="#"
+                  href="/create-account"
                   label="Join a community"
                   width="100%"
                   borderColor="#000000"

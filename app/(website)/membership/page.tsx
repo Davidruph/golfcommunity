@@ -51,17 +51,17 @@ const Membership = () => {
         <Rating />
 
         <div className="flex flex-col items-center justify-center">
-          <div className="w-full max-w-[1260px] relative aspect-video my-22">
+          <div className="w-full max-w-[1260px] relative aspect-video my-22 mb-40">
             <Image
               src="/website/explore-bg.png"
               alt="Footer Background"
               fill
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover hidden md:block"
               priority
               loading="eager"
             />
             {/* Middle Content Div */}
-            <div className="absolute bottom-10 right-10 flex items-center justify-center">
+            <div className="absolute md:bottom-10 md:right-10 flex items-center justify-center px-3">
               <div className="bg-white w-full max-w-[580px] p-5 md:p-8 flex flex-col gap-5">
                 <h2 className="footer-question text-[30px] md:text-[48px]">Sponsor Youth Golf</h2>
 
@@ -95,7 +95,7 @@ const Membership = () => {
             G4C makes golf accessible and engaging through a simple, community-driven approach.
           </p>
 
-          <div className="flex flex-col items-center justify-center my-15 gap-5 lg:flex-row pb-20 p-5">
+          <div className="flex flex-col items-center justify-center my-15 gap-5 lg:flex-row flex-wrap pb-20 p-5">
             <div className="w-[292.5px] h-52 bg-white items-center justify-center gap-5 flex flex-col">
               <Image src="/website/archive.svg" alt="step card 1" width={40} height={40} />
               <p className="works-card-text">
