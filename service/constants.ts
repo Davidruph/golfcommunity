@@ -1,2 +1,5 @@
 export const LOGIN = 'auth/login'
 export const REGISTER = 'auth/register'
+export const COUNTRIES = 'data/countries'
+export const STATES = 'data/states'
+export const CITIES = 'data/cities'

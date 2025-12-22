@@ -5,11 +5,14 @@ import Link from 'next/link'
 import { Form } from 'react-final-form'
 import validate from 'validate.js'
 import { useRegisterMutation } from '../../../service/auth.service'
+import { useCountriesQuery, useStatesQuery, useCitiesQuery } from '../../../service/data.service'
 import rtkMutation from '@/utils/rtkMutation'
 import { showAlert } from '@/utils/showAlert'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { getErrorMessage } from '@/utils/formatErrorResponse'
+import { OnChange } from 'react-final-form-listeners'
+import Loader from '@/components/website/loaders/Loader'
 
 const constraints = {
   firstName: {
@@ -46,6 +49,13 @@ type onSubmitProps = {
   [key: string]: undefined | string
 }
 const Page = () => {
+  const [countryID, setCountryID] = useState<number | null>(null)
+  const [stateID, setStateID] = useState<number | null>(null)
+
+  const { data: countries } = useCountriesQuery({})
+  const { data: states } = useStatesQuery(countryID, { skip: countryID === null })
+  const { data: cities } = useCitiesQuery(stateID, { skip: stateID === null })
+
   const router = useRouter()
   const validateForm = (values: onSubmitProps) => {
     return validate(values, constraints) || {}
@@ -128,30 +138,48 @@ const Page = () => {
                     label="Country"
                     placeholder="Select a country"
                     form={form}
-                    options={[
-                      { value: 'us', label: 'United States' },
-                      { value: 'uk', label: 'United Kingdom' },
-                    ]}
+                    options={
+                      countries?.map((country: { id: number; name: string }) => ({
+                        value: country.id,
+                        label: country.name,
+                      })) || []
+                    }
                   />
+                  <OnChange name="country">
+                    {(value: number) => {
+                      setCountryID(value)
+                      form.change('state', '')
+                    }}
+                  </OnChange>
                   <Select
                     name="state"
                     label="State"
                     placeholder="Select a state"
                     form={form}
-                    options={[
-                      { value: 'us', label: 'United States' },
-                      { value: 'uk', label: 'United Kingdom' },
-                    ]}
+                    options={
+                      states?.map((state: { id: number; name: string }) => ({
+                        value: state.id,
+                        label: state.name,
+                      })) || []
+                    }
                   />
+                  <OnChange name="state">
+                    {(value: number) => {
+                      setStateID(value)
+                      form.change('city', '')
+                    }}
+                  </OnChange>
                   <Select
                     name="city"
                     label="City"
                     placeholder="Select a city"
                     form={form}
-                    options={[
-                      { value: 'us', label: 'United States' },
-                      { value: 'uk', label: 'United Kingdom' },
-                    ]}
+                    options={
+                      cities?.map((city: { id: number; name: string }) => ({
+                        value: city.id,
+                        label: city.name,
+                      })) || []
+                    }
                   />
                   <Input
                     label="Zip Code"
@@ -164,8 +192,9 @@ const Page = () => {
                   <button
                     type="submit"
                     className="auth-submit w-full max-w-[490px] h-[49px] py-1 px-2 mt-4 cursor-pointer"
+                    disabled={submitting}
                   >
-                    Create Account
+                    {submitting ? <Loader /> : 'Create Account'}
                   </button>
                 </form>
               )}
