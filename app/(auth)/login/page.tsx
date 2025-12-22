@@ -3,6 +3,15 @@ import Input from '@/components/auth/Input'
 import Link from 'next/link'
 import { Form } from 'react-final-form'
 import validate from 'validate.js'
+import { useLoginMutation } from '@/service/auth.service'
+import { useEffect } from 'react'
+import { showAlert } from '@/utils/showAlert'
+import { getErrorMessage } from '@/utils/formatErrorResponse'
+import { useRouter } from 'next/navigation'
+import { useDispatch, useSelector } from 'react-redux'
+import { updateUser } from '@/redux/slices/user.slice'
+import rtkMutation from '@/utils/rtkMutation'
+import Loader from '@/components/website/loaders/Loader'
 
 const constraints = {
   email: {
@@ -14,17 +23,79 @@ const constraints = {
   },
 }
 
+type User = {
+  role?: string
+  [key: string]: unknown
+}
+
+type LoginResponse = {
+  user: User
+  token: string
+}
+
 type onSubmitProps = {
   [key: string]: undefined | string
 }
-const page = () => {
+interface UserState {
+  user: {
+    role: string
+  } | null
+  token: string | null
+}
+interface RootState {
+  user: UserState
+}
+
+const Page = () => {
+  const router = useRouter()
+  const { user, token } = useSelector((state: RootState) => state.user)
+
+  useEffect(() => {
+    if (token && user) {
+      if (user.role === 'admin') {
+        router.push('/admin')
+      } else {
+        router.push('/dashboard')
+      }
+    }
+  }, [token, user, router])
+
+  const dispatch = useDispatch()
+
   const validateForm = (values: onSubmitProps) => {
     return validate(values, constraints) || {}
   }
 
-  const onSubmit = (values: onSubmitProps) => {
-    console.log(values)
+  const [login, { isSuccess, error, data }] = useLoginMutation({})
+
+  const onSubmit = async (values: onSubmitProps) => {
+    await rtkMutation(login, values)
   }
+
+  useEffect(() => {
+    if (isSuccess && data) {
+      if (data) {
+        // Store user and token in Redux
+        dispatch(
+          updateUser({
+            user: (data as LoginResponse).user,
+            token: (data as LoginResponse).token,
+          })
+        )
+
+        const { user } = data as LoginResponse
+        // Redirect based on role
+        if (user && (user as User).role === 'admin') {
+          router.push('/admin')
+        } else {
+          router.push('/dashboard')
+        }
+      }
+      showAlert('Login successful!', 'success')
+    } else if (error) {
+      showAlert(getErrorMessage(error), 'error')
+    }
+  }, [isSuccess, error, data, router, dispatch])
 
   return (
     <section>
@@ -66,8 +137,9 @@ const page = () => {
                   <button
                     type="submit"
                     className="auth-submit w-full max-w-[490px] h-[49px] py-1 px-2 mt-4"
+                    disabled={submitting}
                   >
-                    Login
+                    {submitting ? <Loader /> : 'Login'}
                   </button>
                 </form>
               )}
@@ -82,4 +154,4 @@ const page = () => {
   )
 }
 
-export default page
+export default Page

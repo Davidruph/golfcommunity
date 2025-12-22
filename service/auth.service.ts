@@ -1,5 +1,5 @@
 import apiSlice from './apiSlice'
-import { REGISTER } from './constants'
+import { REGISTER, LOGIN } from './constants'
 
 const authApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
@@ -11,7 +11,15 @@ const authApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ['user'],
     }),
+    login: builder.mutation({
+      query: (userData) => ({
+        url: LOGIN,
+        method: 'POST',
+        body: userData,
+      }),
+      invalidatesTags: ['user'],
+    }),
   }),
 })
 
-export const { useRegisterMutation } = authApiSlice
+export const { useRegisterMutation, useLoginMutation } = authApiSlice

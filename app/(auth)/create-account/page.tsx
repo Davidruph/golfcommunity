@@ -13,6 +13,7 @@ import { useRouter } from 'next/navigation'
 import { getErrorMessage } from '@/utils/formatErrorResponse'
 import { OnChange } from 'react-final-form-listeners'
 import Loader from '@/components/website/loaders/Loader'
+import { useSelector } from 'react-redux'
 
 const constraints = {
   firstName: {
@@ -48,7 +49,30 @@ const constraints = {
 type onSubmitProps = {
   [key: string]: undefined | string
 }
+interface UserState {
+  user: {
+    role: string
+  } | null
+  token: string | null
+}
+interface RootState {
+  user: UserState
+}
+
 const Page = () => {
+  const router = useRouter()
+  const { user, token } = useSelector((state: RootState) => state.user)
+
+  useEffect(() => {
+    if (token && user) {
+      if (user.role === 'admin') {
+        router.push('/admin')
+      } else {
+        router.push('/dashboard')
+      }
+    }
+  }, [token, user, router])
+
   const [countryID, setCountryID] = useState<number | null>(null)
   const [stateID, setStateID] = useState<number | null>(null)
 
@@ -56,7 +80,6 @@ const Page = () => {
   const { data: states } = useStatesQuery(countryID, { skip: countryID === null })
   const { data: cities } = useCitiesQuery(stateID, { skip: stateID === null })
 
-  const router = useRouter()
   const validateForm = (values: onSubmitProps) => {
     return validate(values, constraints) || {}
   }
