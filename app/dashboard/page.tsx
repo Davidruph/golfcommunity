@@ -1,38 +1,42 @@
-'use client'
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from '@/components/ui/breadcrumb'
+import { Separator } from '@/components/ui/separator'
+import { SidebarTrigger } from '@/components/ui/sidebar'
 
-import { updateUser } from '@/redux/slices/user.slice'
-import { showAlert } from '@/utils/showAlert'
-import { useRouter } from 'next/navigation'
-import { useDispatch } from 'react-redux'
-
-const DashboardPage = () => {
-  const dispatch = useDispatch()
-  const router = useRouter()
-
-  const handleLogout = () => {
-    // Clear user and token from Redux
-    dispatch(
-      updateUser({
-        user: null,
-        token: null,
-      })
-    )
-
-    showAlert('Logged out successfully', 'success')
-    router.push('/login')
-  }
-
+export default function Page() {
   return (
-    <div>
-      {' '}
-      <button
-        onClick={handleLogout}
-        className={'px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700'}
-      >
-        Logout
-      </button>
-    </div>
+    <>
+      <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
+        <div className="flex items-center gap-2 px-4">
+          <SidebarTrigger className="-ml-1" />
+          <Separator orientation="vertical" className="mr-2 h-4" />
+          <Breadcrumb>
+            <BreadcrumbList>
+              <BreadcrumbItem className="hidden md:block">
+                <BreadcrumbLink href="#">Building Your Application</BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator className="hidden md:block" />
+              <BreadcrumbItem>
+                <BreadcrumbPage>Data Fetching</BreadcrumbPage>
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
+        </div>
+      </header>
+      <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
+        <div className="grid auto-rows-min gap-4 md:grid-cols-3">
+          <div className="aspect-video rounded-xl bg-muted/50" />
+          <div className="aspect-video rounded-xl bg-muted/50" />
+          <div className="aspect-video rounded-xl bg-muted/50" />
+        </div>
+        <div className="min-h-screen flex-1 rounded-xl bg-muted/50 md:min-h-min" />
+      </div>
+    </>
   )
 }
-
-export default DashboardPage
