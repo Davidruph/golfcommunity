@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
-    <ProtectedRoute requiredRole={['admin', 'super_admin', 'golfer']}>
+    <ProtectedRoute requiredRole="golfer">
       <SidebarProvider>
         <AppSidebar />
         <SidebarInset>{children}</SidebarInset>

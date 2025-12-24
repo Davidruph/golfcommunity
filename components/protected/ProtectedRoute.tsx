@@ -39,11 +39,8 @@ export default function ProtectedRoute({ children, requiredRole = 'admin' }: Pro
     }
 
     if (!requiredRoles.includes(user.role)) {
-      if (user.role === 'golfer' && requiredRoles.includes('admin')) {
-        router.replace('/dashboard')
-      } else {
-        router.replace('/')
-      }
+      router.replace('/forbidden')
+      return
     }
   }, [token, user, requiredRoles, router])
 
