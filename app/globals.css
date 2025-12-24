@@ -835,3 +835,11 @@ input:-webkit-autofill:active {
   -webkit-text-fill-color: inherit !important;
   transition: background-color 5000s ease-in-out 0s;
 }
+.panel-name-switcher {
+  font-family: Geist;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 23px;
+  letter-spacing: 0%;
+  color: #3f3f46;
+}

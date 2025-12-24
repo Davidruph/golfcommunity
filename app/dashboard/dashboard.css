@@ -80,3 +80,36 @@
     @apply bg-background text-foreground;
   }
 }
+
+.user-dashboard-menu {
+  font-family: Geist;
+  font-weight: 500;
+  font-size: 15px;
+  line-height: 120%;
+  letter-spacing: 0%;
+  vertical-align: middle;
+}
+.user-dashboard-menu [data-sidebar='menu-button']:hover {
+  background-color: #069769;
+  color: #ffffff;
+}
+
+/* If you want to change the icon color on hover too */
+.user-dashboard-menu [data-sidebar='menu-button']:hover img {
+  filter: brightness(0) invert(1); /* Makes icons white */
+}
+.user-dashboard-menu [data-sidebar='menu-button'][data-active='true'] {
+  background-color: #069769;
+  color: #ffffff;
+}
+.user-dashboard-menu [data-sidebar='menu-button'][data-active='true'] img {
+  filter: brightness(0) invert(1); /* Makes icons white */
+}
+.user-sidebar-label {
+  font-family: Geist;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 0%;
+  color: #5d6776;
+}

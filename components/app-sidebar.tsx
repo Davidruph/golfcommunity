@@ -1,21 +1,9 @@
 'use client'
 
 import * as React from 'react'
-import {
-  AudioWaveform,
-  BookOpen,
-  Bot,
-  Command,
-  Frame,
-  GalleryVerticalEnd,
-  Map,
-  PieChart,
-  Settings2,
-  SquareTerminal,
-} from 'lucide-react'
+import { LayoutDashboard } from 'lucide-react'
 
-import { NavMain } from '@/components/nav-main'
-import { NavProjects } from '@/components/nav-projects'
+import { AdminSidebarNav } from '@/components/admin-nav'
 import { NavUser } from '@/components/nav-user'
 import { TeamSwitcher } from '@/components/team-switcher'
 import {
@@ -25,149 +13,110 @@ import {
   SidebarHeader,
   SidebarRail,
 } from '@/components/ui/sidebar'
+import { useSelector } from 'react-redux'
+import dashboard from '../public/admin/dashboard.svg'
+import users from '../public/admin/users.svg'
+import communities from '../public/admin/communities.svg'
+import captains from '../public/admin/captains.svg'
+import sponsors from '../public/admin/sponsors.svg'
+import kids from '../public/admin/kids.svg'
+import leaderboards from '../public/admin/leaderboards.svg'
+import message from '../public/admin/message.svg'
+import reports from '../public/admin/reports.svg'
+import settings from '../public/admin/settings.svg'
 
 // This is sample data.
-const data = {
-  user: {
-    name: 'shadcn',
-    email: 'm@example.com',
-    avatar: '/avatars/shadcn.jpg',
-  },
+const baseData = {
   teams: [
     {
-      name: 'Acme Inc',
-      logo: GalleryVerticalEnd,
-      plan: 'Enterprise',
-    },
-    {
-      name: 'Acme Corp.',
-      logo: AudioWaveform,
-      plan: 'Startup',
-    },
-    {
-      name: 'Evil Corp.',
-      logo: Command,
-      plan: 'Free',
-    },
-  ],
-  navMain: [
-    {
-      title: 'Playground',
-      url: '#',
-      icon: SquareTerminal,
-      isActive: true,
-      items: [
-        {
-          title: 'History',
-          url: '#',
-        },
-        {
-          title: 'Starred',
-          url: '#',
-        },
-        {
-          title: 'Settings',
-          url: '#',
-        },
-      ],
-    },
-    {
-      title: 'Models',
-      url: '#',
-      icon: Bot,
-      items: [
-        {
-          title: 'Genesis',
-          url: '#',
-        },
-        {
-          title: 'Explorer',
-          url: '#',
-        },
-        {
-          title: 'Quantum',
-          url: '#',
-        },
-      ],
-    },
-    {
-      title: 'Documentation',
-      url: '#',
-      icon: BookOpen,
-      items: [
-        {
-          title: 'Introduction',
-          url: '#',
-        },
-        {
-          title: 'Get Started',
-          url: '#',
-        },
-        {
-          title: 'Tutorials',
-          url: '#',
-        },
-        {
-          title: 'Changelog',
-          url: '#',
-        },
-      ],
-    },
-    {
-      title: 'Settings',
-      url: '#',
-      icon: Settings2,
-      items: [
-        {
-          title: 'General',
-          url: '#',
-        },
-        {
-          title: 'Team',
-          url: '#',
-        },
-        {
-          title: 'Billing',
-          url: '#',
-        },
-        {
-          title: 'Limits',
-          url: '#',
-        },
-      ],
+      name: 'G4C Panel',
+      logo: LayoutDashboard,
     },
   ],
   projects: [
     {
-      name: 'Design Engineering',
-      url: '#',
-      icon: Frame,
+      name: 'Dashboard',
+      url: '/admin',
+      icon: dashboard,
     },
     {
-      name: 'Sales & Marketing',
-      url: '#',
-      icon: PieChart,
+      name: 'Users',
+      url: '/admin/users',
+      icon: users,
     },
     {
-      name: 'Travel',
-      url: '#',
-      icon: Map,
+      name: 'Communities',
+      url: '/admin/communities',
+      icon: communities,
+    },
+    {
+      name: 'Captains',
+      url: '/admin/captains',
+      icon: captains,
+    },
+    {
+      name: 'Sponors',
+      url: '/admin/sponsors',
+      icon: sponsors,
+    },
+    {
+      name: 'Sponored Kids',
+      url: '/admin/sponsored-kids',
+      icon: kids,
+    },
+    {
+      name: 'Leaderboard & Games',
+      url: '/admin/leaderboards-and-games',
+      icon: leaderboards,
+    },
+    {
+      name: 'Messaging Oversight',
+      url: '/admin/messaging',
+      icon: message,
+    },
+    {
+      name: 'Reports',
+      url: '/admin/reports',
+      icon: reports,
+    },
+    {
+      name: 'Settings',
+      url: '/admin/settings',
+      icon: settings,
     },
   ],
 }
 
+type User = {
+  first_name: string
+  last_name: string
+  email: string
+  avatar: string
+}
+
+type RootState = {
+  user: {
+    user: User | null
+  }
+}
+
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const user = useSelector((state: RootState) => state?.user?.user)
+
+  if (!user) {
+    return null
+  }
+
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
-        <TeamSwitcher teams={data.teams} />
+        <TeamSwitcher teams={baseData.teams} />
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} />
-        <NavProjects projects={data.projects} />
+        <AdminSidebarNav projects={baseData.projects} />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser user={user} />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

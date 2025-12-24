@@ -2,7 +2,7 @@
 
 import { useSelector } from 'react-redux'
 import { useRouter } from 'next/navigation'
-import { useEffect, ReactNode } from 'react'
+import { useEffect, ReactNode, useMemo } from 'react'
 import Spinner from '../website/loaders/Spinner'
 
 interface ProtectedRouteProps {
@@ -25,36 +25,32 @@ export default function ProtectedRoute({ children, requiredRole = 'admin' }: Pro
   const router = useRouter()
   const { user, token } = useSelector((state: RootState) => state.user)
 
+  const requiredRoles = useMemo(
+    () => (Array.isArray(requiredRole) ? requiredRole : [requiredRole]),
+    [requiredRole]
+  )
+
+  const hasAccess = !!token && !!user && requiredRoles.includes(user.role)
+
   useEffect(() => {
-    // If no token, redirect to login
-    if (!token) {
-      router.push('/login')
+    if (!token || !user) {
+      router.replace('/login')
       return
     }
 
-    // If no user data, redirect to login
-    if (!user) {
-      router.push('/login')
-      return
+    if (!requiredRoles.includes(user.role)) {
+      if (user.role === 'golfer' && requiredRoles.includes('admin')) {
+        router.replace('/dashboard')
+      } else {
+        router.replace('/')
+      }
     }
+  }, [token, user, requiredRoles, router])
 
-    // Check if user has required role
-    const requiredRoles = Array.isArray(requiredRole) ? requiredRole : [requiredRole]
-    const userRole = user.role
-    // console.log('User Role:', userRole, 'Required Roles:', requiredRoles)
-
-    if (!requiredRoles.includes(userRole)) {
-      // User doesn't have the required role, redirect to home
-      router.push('/')
-      return
-    }
-  }, [token, user, requiredRole, router])
-
-  // While checking auth, show spinner
-  if (!token || !user) {
+  if (!hasAccess) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <Spinner loading={true} />
+        <Spinner loading />
       </div>
     )
   }
