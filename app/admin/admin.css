@@ -104,3 +104,84 @@
 .admin-dashboard-menu [data-sidebar='menu-button'][data-active='true'] img {
   filter: brightness(0) invert(1); /* Makes icons white */
 }
+.admin-dashboard-add-btn {
+  font-family: Geist;
+  font-weight: 600;
+  font-size: 15px;
+  line-height: 120%;
+  letter-spacing: 0%;
+  color: #ffffff;
+}
+.page-title {
+  font-family: Geist;
+  font-weight: 600;
+  font-size: 29px;
+  line-height: 120%;
+  letter-spacing: 0%;
+  color: #000000;
+}
+.page-subtitle {
+  font-family: Geist;
+  font-weight: 500;
+  font-size: 15px;
+  line-height: 120%;
+  letter-spacing: 0%;
+  color: #808080;
+}
+.table-filter-inputs {
+  gap: 10px;
+  opacity: 1;
+  border-radius: 15px;
+  padding-top: 10px;
+  padding-right: 10px;
+  padding-bottom: 10px;
+  padding-left: 10px;
+  border: 1px solid #e0e0e0;
+  background-color: #f2f2f2;
+  font-family: Geist;
+  font-weight: 500;
+  font-size: 15px;
+  line-height: 120%;
+  letter-spacing: 0%;
+}
+.filter-btn {
+  width: 40px;
+  height: 40px;
+  gap: 50px;
+  opacity: 1;
+  border-radius: 15px;
+  padding: 10px;
+  border: 1px solid #e0e0e0;
+  background: #f2f2f2;
+}
+.table-filter-inputs ::placeholder {
+  color: #808080;
+}
+.table-data-head {
+  font-family: Geist;
+  font-weight: 500;
+  font-size: 13px;
+  line-height: 120%;
+  letter-spacing: 0%;
+  vertical-align: middle;
+  color: #4d4d4d !important;
+  text-transform: uppercase;
+}
+.table-data-body {
+  font-family: Geist;
+  font-weight: 500;
+  font-size: 15px;
+  line-height: 120%;
+  letter-spacing: 0%;
+  vertical-align: middle;
+  color: #808080 !important;
+}
+.table-badge {
+  box-shadow: 4px 4px 4px 0px #e1e1e140;
+  font-family: Geist;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 120%;
+  letter-spacing: 0%;
+  color: #4d4d4d;
+}
