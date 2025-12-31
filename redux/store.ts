@@ -26,7 +26,8 @@ const transforms =
   typeof window !== 'undefined'
     ? [
         encryptTransform({
-          secretKey: process.env.NEXT_PUBLIC_ENCRYPT_KEY || '',
+          secretKey:
+            '%$gdhddjhf^^&ggdhhfhfhjdjdggdh7476ygh&^T%%&ggdhd764747hrYR$%^((hgdhdgg))gfgfhd',
           onError: function (error) {
             console.log(error)
           },
