@@ -843,3 +843,12 @@ input:-webkit-autofill:active {
   letter-spacing: 0%;
   color: #3f3f46;
 }
+.pagination-btns {
+  font-family: var(--font-geist);
+  font-family: Geist;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 0%;
+  cursor: pointer;
+}

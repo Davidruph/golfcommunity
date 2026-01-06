@@ -1,5 +1,5 @@
 'use client'
-import { Funnel } from 'lucide-react'
+import { BadgeCheck, Funnel } from 'lucide-react'
 import {
   Table,
   TableBody,
@@ -10,6 +10,15 @@ import {
 } from '@/components/ui/table'
 import { GoDotFill } from 'react-icons/go'
 import { PiDotsThreeOutlineLight } from 'react-icons/pi'
+import { FaAngleLeft, FaAngleRight } from 'react-icons/fa6'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '../ui/dropdown-menu'
+import { PaginationEllipsis } from '@/components/ui/pagination'
 
 const users = [
   {
@@ -156,12 +165,52 @@ const CustomDataTable = () => {
                 </TableCell>
                 <TableCell className="p-[10px]">{user.communities}</TableCell>
                 <TableCell className="p-[10px]">
-                  <PiDotsThreeOutlineLight size={20} color="black" />
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild className="cursor-pointer">
+                      <PiDotsThreeOutlineLight size={20} color="black" />
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent
+                      className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg bg-white"
+                      side={'bottom'}
+                      align="end"
+                      sideOffset={4}
+                    >
+                      <DropdownMenuGroup>
+                        <DropdownMenuItem>
+                          <BadgeCheck />
+                          Edit User
+                        </DropdownMenuItem>
+                        <DropdownMenuItem>
+                          <BadgeCheck />
+                          Delete User
+                        </DropdownMenuItem>
+                      </DropdownMenuGroup>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
+      </div>
+
+      <div className="w-full mt-4 flex items-center justify-end gap-2 text-[#262626]">
+        <button className="pagination-btns px-4 py-2 mr-2 flex gap-2 items-center">
+          <FaAngleLeft /> Previous
+        </button>
+        <button className="pagination-btns h-[36px] w-[36px]">1</button>
+        <button className="pagination-btns h-[36px] w-[36px] bg-[#069768] text-white">2</button>
+        <button className="pagination-btns h-[36px] w-[36px]">3</button>
+        <button className="pagination-btns h-[36px] w-[36px]">4</button>
+        <button className="pagination-btns h-[36px] w-[36px]">5</button>
+        <button className="pagination-btns h-[36px] w-[36px]">6</button>
+        <button className="pagination-btns h-[36px] w-[36px]">
+          {' '}
+          <PaginationEllipsis />
+        </button>
+        <button className="pagination-btns px-4 py-2 flex items-center gap-2">
+          Next <FaAngleRight />
+        </button>
       </div>
     </div>
   )
