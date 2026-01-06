@@ -1,5 +1,5 @@
 'use client'
-import { ReactNode, useState } from 'react'
+import { ReactNode, useState, useEffect, useCallback } from 'react'
 import { Funnel } from 'lucide-react'
 import {
   Table,
@@ -26,7 +26,7 @@ export interface TableFilter {
   key: string
   type: 'search' | 'select'
   placeholder?: string
-  options?: { label: string; value: string }[]
+  options?: { label: string; value: string | number }[]
   onChange?: (value: string) => void
   className?: string
 }
@@ -80,6 +80,21 @@ function DynamicTable<T extends { id?: string | number }>({
 }: DynamicTableProps<T>) {
   const [currentPage, setCurrentPage] = useState(1)
   const [filterValues, setFilterValues] = useState<Record<string, string>>({})
+  const [debouncedFilters, setDebouncedFilters] = useState<Record<string, string>>({})
+
+  // Debounce filter changes
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedFilters(filterValues)
+
+      // Call server-side filter if enabled
+      if (useServerSide && onFilterChange) {
+        onFilterChange(filterValues)
+      }
+    }, 500) // 500ms delay
+
+    return () => clearTimeout(timer)
+  }, [filterValues, useServerSide, onFilterChange])
 
   const dataArray = Array.isArray(data) ? data : data?.data || []
   const serverPagination = !Array.isArray(data) ? data?.pagination : null
@@ -124,11 +139,6 @@ function DynamicTable<T extends { id?: string | number }>({
     const newFilters = { ...filterValues, [key]: value }
     setFilterValues(newFilters)
     setCurrentPage(1)
-
-    // Call server-side filter if enabled
-    if (useServerSide && onFilterChange) {
-      onFilterChange(newFilters)
-    }
   }
 
   const handlePageChange = (page: number) => {
@@ -167,16 +177,16 @@ function DynamicTable<T extends { id?: string | number }>({
     <div className="mt-6 w-full">
       {/* Filters */}
       {showFilters && filters.length > 0 && (
-        <div className="table-filters flex flex-col md:flex-row gap-2 items-center justify-start">
+        <div className="table-filters flex flex-col md:flex-row gap-2 items-center justify-start w-full">
           {filters.map((filter) => (
-            <div key={filter.key}>
+            <div
+              key={filter.key}
+              className={filter.type === 'search' ? 'max-w-[596px] min-w-0 w-full' : ''}
+            >
               {filter.type === 'search' && (
                 <input
-                  key={filter.key}
-                  type="text"
-                  className={`table-filter-inputs w-full max-w-[596px] h-[40px] ${
-                    filter.className || ''
-                  }`}
+                  type="search"
+                  className={`table-filter-inputs w-full h-[40px] ${filter.className || ''}`}
                   placeholder={filter.placeholder || 'Search...'}
                   value={filterValues[filter.key] || ''}
                   onChange={(e) => {
@@ -185,9 +195,9 @@ function DynamicTable<T extends { id?: string | number }>({
                   }}
                 />
               )}
+
               {filter.type === 'select' && (
                 <select
-                  key={filter.key}
                   className={`table-filter-inputs w-full max-w-[152px] h-[40px] ${
                     filter.className || ''
                   }`}
@@ -207,7 +217,8 @@ function DynamicTable<T extends { id?: string | number }>({
               )}
             </div>
           ))}
-          <div className="filter-btn flex items-center justify-center cursor-pointer">
+
+          <div className="filter-btn flex items-center justify-center cursor-pointer shrink-0">
             <Funnel />
           </div>
         </div>

@@ -120,7 +120,6 @@ export default function Page() {
 
   const [register, { isSuccess, error }] = useRegisterMutation()
   const onSubmit = async (values: onSubmitProps) => {
-    console.log(values)
     await rtkMutation(register, values)
   }
 
@@ -140,7 +139,6 @@ export default function Page() {
     })) || []
 
   const users: User[] = usersData || []
-  console.log('Users Data:', users)
 
   // Define columns
   const columns: TableColumn<User>[] = [
@@ -307,7 +305,6 @@ export default function Page() {
       </div>
 
       <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
-        <SheetTrigger>Open</SheetTrigger>
         <SheetContent className="overflow-auto">
           <SheetHeader>
             <SheetTitle>Add Users</SheetTitle>
