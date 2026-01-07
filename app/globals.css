@@ -852,3 +852,29 @@ input:-webkit-autofill:active {
   letter-spacing: 0%;
   cursor: pointer;
 }
+.auth-bg-title {
+  font-family: Geist;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 23px;
+  letter-spacing: 0%;
+  color: #ffffff;
+}
+
+.auth-bg-desc {
+  font-family: Geist;
+  font-weight: 600;
+  font-size: 40px;
+  line-height: 100%;
+  letter-spacing: 0%;
+  color: #ffffff;
+}
+.auth-bg-desc span {
+  font-family: Instrument Serif;
+  font-weight: 400;
+  font-style: Italic;
+  font-size: 40px;
+  line-height: 100%;
+  letter-spacing: 0%;
+  color: #f1ef2d;
+}

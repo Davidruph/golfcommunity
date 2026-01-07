@@ -9,18 +9,16 @@ import {
 } from '@/components/ui/breadcrumb'
 import { Separator } from '@/components/ui/separator'
 import { SidebarTrigger } from '@/components/ui/sidebar'
-import { BadgeCheck, Plus, Trash2 } from 'lucide-react'
+import { Plus, ShieldBan, SquarePen, Trash2 } from 'lucide-react'
 import {
   Sheet,
   SheetContent,
   SheetDescription,
   SheetHeader,
   SheetTitle,
-  SheetTrigger,
 } from '@/components/ui/sheet'
 import { useEffect, useState } from 'react'
 import rtkMutation from '@/utils/rtkMutation'
-import { useRegisterMutation } from '@/service/auth.service'
 import { useCitiesQuery, useCountriesQuery, useStatesQuery } from '@/service/data.service'
 import { validate } from 'validate.js'
 import { showAlert } from '@/utils/showAlert'
@@ -40,10 +38,29 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { GoDotFill } from 'react-icons/go'
 import { PiDotsThreeOutlineLight } from 'react-icons/pi'
-import { useGetUsersQuery } from '@/service/user.service'
+import {
+  useDeleteUserMutation,
+  useGetUsersQuery,
+  useRegisterUserMutation,
+  useToggleUserStatusMutation,
+  useUpdateUserMutation,
+} from '@/service/user.service'
 import { useGetRolesQuery } from '@/service/role.service'
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
+import type { FormApi } from 'final-form'
 
 const constraints = {
+  accountType: {
+    presence: true,
+  },
   firstName: {
     presence: true,
   },
@@ -74,6 +91,25 @@ const constraints = {
   },
 }
 
+const update_constraints = {
+  firstName: {
+    presence: true,
+  },
+  lastName: {
+    presence: true,
+  },
+  phoneNumber: {
+    presence: true,
+  },
+  email: {
+    presence: true,
+    email: true,
+  },
+  zipCode: {
+    presence: true,
+  },
+}
+
 type onSubmitProps = {
   [key: string]: undefined | string
 }
@@ -84,17 +120,28 @@ interface User {
   last_name: string
   email: string
   role_name: string
-  status: string | null
+  status: number | null
   membership: string
   phone_number: string
   communities_count: number
   created_at: string
+  country_id?: number
+  state_id?: number
+  city_id?: number
+  zip_code?: string
+  account_type?: string
 }
 
 export default function Page() {
   const [isSheetOpen, setIsSheetOpen] = useState(false)
   const [page, setPage] = useState(1)
   const [filtersVal, setFiltersVal] = useState<Record<string, string>>({})
+  const [selectedUser, setSelectedUser] = useState<User | null>(null)
+  const [isEditSheetOpen, setIsEditSheetOpen] = useState(false)
+  const [userToDisable, setUserToDisable] = useState<User | null>(null)
+  const [deleteUser, setDeleteUser] = useState<User | null>(null)
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
+  const [formApi, setFormApi] = useState<FormApi<onSubmitProps> | null>(null)
 
   const addUser = () => {
     setIsSheetOpen(true)
@@ -102,6 +149,7 @@ export default function Page() {
 
   const [countryID, setCountryID] = useState<number | null>(null)
   const [stateID, setStateID] = useState<number | null>(null)
+
   const { data: usersData, isLoading } = useGetUsersQuery({
     page,
     limit: 10,
@@ -118,18 +166,57 @@ export default function Page() {
     return validate(values, constraints) || {}
   }
 
-  const [register, { isSuccess, error }] = useRegisterMutation()
+  const validateUpdateForm = (values: onSubmitProps) => {
+    return validate(values, update_constraints) || {}
+  }
+
+  const [register, { isSuccess, error }] = useRegisterUserMutation()
   const onSubmit = async (values: onSubmitProps) => {
     await rtkMutation(register, values)
+  }
+
+  const [updateUser, { isSuccess: isUpdateSuccess, error: updateError }] = useUpdateUserMutation()
+  const onUpdateSubmit = async (values: onSubmitProps) => {
+    const payload = { ...values, id: selectedUser?.id }
+    await rtkMutation(updateUser, payload)
+    setIsEditSheetOpen(false)
+    setSelectedUser(null)
+  }
+
+  const [
+    deleteUserData,
+    { isSuccess: isDeleteSuccess, error: deleteError, isLoading: isDeleteLoading },
+  ] = useDeleteUserMutation()
+  const handleDeleteUser = (user: User) => {
+    console.log('Delete', user)
+    rtkMutation(deleteUserData, { id: user.id })
+    setShowDeleteDialog(false)
   }
 
   useEffect(() => {
     if (isSuccess) {
       showAlert('Registration successful!', 'success')
+      formApi?.reset()
     } else if (error) {
       showAlert(getErrorMessage(error), 'error')
     }
-  }, [isSuccess, error])
+  }, [isSuccess, error, formApi])
+
+  useEffect(() => {
+    if (isUpdateSuccess) {
+      showAlert('Update successful!', 'success')
+    } else if (updateError) {
+      showAlert(getErrorMessage(updateError), 'error')
+    }
+  }, [isUpdateSuccess, updateError])
+
+  useEffect(() => {
+    if (isDeleteSuccess) {
+      showAlert('Delete successful!', 'success')
+    } else if (deleteError) {
+      showAlert(getErrorMessage(deleteError), 'error')
+    }
+  }, [isDeleteSuccess, deleteError])
 
   const { data: rolesData } = useGetRolesQuery({})
   const roleOptions =
@@ -226,6 +313,19 @@ export default function Page() {
     },
   ]
 
+  const handleEditUser = (user: User) => {
+    // Set country and state IDs before opening the sheet
+    console.log('User to edit:', user)
+    if (user.country_id) {
+      setCountryID(user.country_id)
+    }
+    if (user.state_id) {
+      setStateID(user.state_id)
+    }
+    setSelectedUser(user)
+    setIsEditSheetOpen(true)
+  }
+
   // Custom actions render with dropdown
   const renderActions = (user: User) => (
     <DropdownMenu>
@@ -241,13 +341,23 @@ export default function Page() {
         sideOffset={4}
       >
         <DropdownMenuGroup>
-          <DropdownMenuItem onClick={() => console.log('Edit', user)}>
-            <BadgeCheck className="mr-2" />
+          <DropdownMenuItem onClick={() => handleEditUser(user)}>
+            <SquarePen className="mr-2" />
             Edit User
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => console.log('Delete', user)} className="text-red-600">
+          <DropdownMenuItem
+            onClick={() => {
+              setDeleteUser(user)
+              setShowDeleteDialog(true)
+            }}
+            className="text-red-600"
+          >
             <Trash2 className="mr-2" />
             Delete User
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => setUserToDisable(user)} className="text-red-600">
+            <ShieldBan className="mr-2" />
+            {user?.status === 1 ? 'Disable' : 'Enable'} User
           </DropdownMenuItem>
         </DropdownMenuGroup>
       </DropdownMenuContent>
@@ -262,6 +372,31 @@ export default function Page() {
   // Handle page changes
   const handlePageChange = (newPage: number) => {
     setPage(newPage)
+  }
+
+  const [toggleUserStatus, { isLoading: isToggleLoading }] = useToggleUserStatusMutation()
+  const handleDisableUser = async () => {
+    if (userToDisable) {
+      // Add your disable mutation here
+      await toggleUserStatus({ id: userToDisable.id, type: 'disable' })
+      showAlert(
+        `User "${userToDisable.first_name} ${userToDisable.last_name}" has been disabled`,
+        'success'
+      )
+      setUserToDisable(null)
+    }
+  }
+
+  const handleEnableUser = async () => {
+    if (userToDisable) {
+      // Add your disable mutation here
+      await toggleUserStatus({ id: userToDisable.id, type: 'enable' })
+      showAlert(
+        `User "${userToDisable.first_name} ${userToDisable.last_name}" has been enabled`,
+        'success'
+      )
+      setUserToDisable(null)
+    }
   }
 
   return (
@@ -312,112 +447,286 @@ export default function Page() {
             <Form
               onSubmit={onSubmit}
               validate={validateForm}
-              render={({ handleSubmit, form, submitting }) => (
-                <form onSubmit={handleSubmit}>
-                  <Input
-                    label="First Name"
-                    name="firstName"
-                    type="text"
-                    placeholder="Enter First Name"
-                    form={form}
-                  />
-                  <Input
-                    label="Last Name"
-                    name="lastName"
-                    type="text"
-                    placeholder="Enter Last Name"
-                    form={form}
-                  />
-                  <Input
-                    label="Email"
-                    name="email"
-                    type="email"
-                    placeholder="Enter Email"
-                    form={form}
-                  />
-                  <Input
-                    label="Password"
-                    name="password"
-                    type="password"
-                    placeholder="Enter Password"
-                    form={form}
-                  />
-                  <Input
-                    label="Phone Number"
-                    name="phoneNumber"
-                    type="number"
-                    placeholder="Enter Phone Number"
-                    form={form}
-                  />
-                  <Select
-                    name="country"
-                    label="Country"
-                    placeholder="Select a country"
-                    form={form}
-                    options={
-                      countries?.map((country: { id: number; name: string }) => ({
-                        value: country.id,
-                        label: country.name,
-                      })) || []
-                    }
-                  />
-                  <OnChange name="country">
-                    {(value: number) => {
-                      setCountryID(value)
-                      form.change('state', '')
-                    }}
-                  </OnChange>
-                  <Select
-                    name="state"
-                    label="State"
-                    placeholder="Select a state"
-                    form={form}
-                    options={
-                      states?.map((state: { id: number; name: string }) => ({
-                        value: state.id,
-                        label: state.name,
-                      })) || []
-                    }
-                  />
-                  <OnChange name="state">
-                    {(value: number) => {
-                      setStateID(value)
-                      form.change('city', '')
-                    }}
-                  </OnChange>
-                  <Select
-                    name="city"
-                    label="City"
-                    placeholder="Select a city"
-                    form={form}
-                    options={
-                      cities?.map((city: { id: number; name: string }) => ({
-                        value: city.id,
-                        label: city.name,
-                      })) || []
-                    }
-                  />
-                  <Input
-                    label="Zip Code"
-                    name="zipCode"
-                    type="text"
-                    placeholder="Enter Zip Code"
-                    form={form}
-                  />
+              render={({ handleSubmit, form, submitting }) => {
+                if (!formApi) {
+                  setFormApi(form)
+                }
+                return (
+                  <form onSubmit={handleSubmit}>
+                    <Select
+                      name="accountType"
+                      label="Account Type"
+                      placeholder="Select an account type"
+                      form={form}
+                      options={[
+                        { label: 'Golfer', value: 'Golfer' },
+                        {
+                          label: 'Golf Teaching Professional',
+                          value: 'Golf Teaching Professional',
+                        },
+                        { label: 'Tournament Director', value: 'Tournament Director' },
+                        { label: 'Non Profit Organization', value: 'Non Profit Organization' },
+                        { label: 'Business Owner', value: 'Business Owner' },
+                        {
+                          label: 'Early Thanksgiving Day Golf',
+                          value: 'Early Thanksgiving Day Golf',
+                        },
+                        { label: 'Church Owner', value: 'Church Owner' },
+                      ]}
+                    />
+                    <Input
+                      label="First Name"
+                      name="firstName"
+                      type="text"
+                      placeholder="Enter First Name"
+                      form={form}
+                    />
+                    <Input
+                      label="Last Name"
+                      name="lastName"
+                      type="text"
+                      placeholder="Enter Last Name"
+                      form={form}
+                    />
+                    <Input
+                      label="Email"
+                      name="email"
+                      type="email"
+                      placeholder="Enter Email"
+                      form={form}
+                    />
+                    <Input
+                      label="Password"
+                      name="password"
+                      type="password"
+                      placeholder="Enter Password"
+                      form={form}
+                    />
+                    <Input
+                      label="Phone Number"
+                      name="phoneNumber"
+                      type="number"
+                      placeholder="Enter Phone Number"
+                      form={form}
+                    />
+                    <Select
+                      name="country"
+                      label="Country"
+                      placeholder="Select a country"
+                      form={form}
+                      options={
+                        countries?.map((country: { id: number; name: string }) => ({
+                          value: country.id,
+                          label: country.name,
+                        })) || []
+                      }
+                    />
+                    <OnChange name="country">
+                      {(value: number) => {
+                        setCountryID(value)
+                        form.change('state', '')
+                      }}
+                    </OnChange>
+                    <Select
+                      name="state"
+                      label="State"
+                      placeholder="Select a state"
+                      form={form}
+                      options={
+                        states?.map((state: { id: number; name: string }) => ({
+                          value: state.id,
+                          label: state.name,
+                        })) || []
+                      }
+                    />
+                    <OnChange name="state">
+                      {(value: number) => {
+                        setStateID(value)
+                        form.change('city', '')
+                      }}
+                    </OnChange>
+                    <Select
+                      name="city"
+                      label="City"
+                      placeholder="Select a city"
+                      form={form}
+                      options={
+                        cities?.map((city: { id: number; name: string }) => ({
+                          value: city.id,
+                          label: city.name,
+                        })) || []
+                      }
+                    />
+                    <Input
+                      label="Zip Code"
+                      name="zipCode"
+                      type="text"
+                      placeholder="Enter Zip Code"
+                      form={form}
+                    />
 
-                  <button
-                    type="submit"
-                    className="auth-submit w-full max-w-[490px] h-[49px] py-1 px-2 mt-4 cursor-pointer"
-                    disabled={submitting}
-                  >
-                    {submitting ? <Loader /> : 'Create Account'}
-                  </button>
-                </form>
-              )}
+                    <button
+                      type="submit"
+                      className="auth-submit w-full max-w-[490px] h-[49px] py-1 px-2 mt-4 cursor-pointer"
+                      disabled={submitting}
+                    >
+                      {submitting ? <Loader /> : 'Create Account'}
+                    </button>
+                  </form>
+                )
+              }}
             />
           </SheetHeader>
         </SheetContent>
       </Sheet>
+
+      <Sheet open={isEditSheetOpen} onOpenChange={setIsEditSheetOpen}>
+        <SheetContent className="overflow-auto">
+          <SheetHeader>
+            <SheetTitle>Edit Users</SheetTitle>
+            <SheetDescription></SheetDescription>
+            {selectedUser && (
+              <Form
+                onSubmit={onUpdateSubmit}
+                validate={validateUpdateForm}
+                initialValues={{
+                  firstName: selectedUser.first_name,
+                  lastName: selectedUser.last_name,
+                  email: selectedUser.email,
+                  phoneNumber: selectedUser.phone_number,
+                  zipCode: selectedUser.zip_code,
+                  accountType: selectedUser.account_type,
+                }}
+                render={({ handleSubmit, form, submitting }) => (
+                  <form onSubmit={handleSubmit}>
+                    <Select
+                      name="accountType"
+                      label="Account Type"
+                      placeholder="Select an account type"
+                      form={form}
+                      options={[
+                        { label: 'Golfer', value: 'Golfer' },
+                        {
+                          label: 'Golf Teaching Professional',
+                          value: 'Golf Teaching Professional',
+                        },
+                        { label: 'Tournament Director', value: 'Tournament Director' },
+                        { label: 'Non Profit Organization', value: 'Non Profit Organization' },
+                        { label: 'Business Owner', value: 'Business Owner' },
+                        {
+                          label: 'Early Thanksgiving Day Golf',
+                          value: 'Early Thanksgiving Day Golf',
+                        },
+                        { label: 'Church Owner', value: 'Church Owner' },
+                      ]}
+                    />
+                    <Input
+                      label="First Name"
+                      name="firstName"
+                      type="text"
+                      placeholder="Enter First Name"
+                      form={form}
+                    />
+                    <Input
+                      label="Last Name"
+                      name="lastName"
+                      type="text"
+                      placeholder="Enter Last Name"
+                      form={form}
+                    />
+                    <Input
+                      label="Email"
+                      name="email"
+                      type="email"
+                      placeholder="Enter Email"
+                      form={form}
+                    />
+                    <Input
+                      label="Phone Number"
+                      name="phoneNumber"
+                      type="number"
+                      placeholder="Enter Phone Number"
+                      form={form}
+                    />
+
+                    <Input
+                      label="Zip Code"
+                      name="zipCode"
+                      type="text"
+                      placeholder="Enter Zip Code"
+                      form={form}
+                    />
+
+                    <button
+                      type="submit"
+                      className="auth-submit w-full max-w-[490px] h-[49px] py-1 px-2 mt-4 cursor-pointer"
+                      disabled={submitting}
+                    >
+                      {submitting ? <Loader /> : ' Update Account'}
+                    </button>
+                  </form>
+                )}
+              />
+            )}
+          </SheetHeader>
+        </SheetContent>
+      </Sheet>
+
+      <Dialog open={!!userToDisable} onOpenChange={() => setUserToDisable(null)}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>{userToDisable?.status === 1 ? 'Disable' : 'Enable'} User</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to {userToDisable?.status === 1 ? 'disable' : 'enable'}{' '}
+              {userToDisable?.first_name} {userToDisable?.last_name}? This action will make the user
+              inactive.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="sm:justify-start gap-2">
+            <DialogClose asChild>
+              <button type="button" className="px-4 py-2 border rounded hover:bg-gray-100">
+                Cancel
+              </button>
+            </DialogClose>
+            <button
+              onClick={userToDisable?.status === 1 ? handleDisableUser : handleEnableUser}
+              className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+              disabled={isToggleLoading}
+            >
+              {isToggleLoading ? <Loader /> : userToDisable?.status === 1 ? 'Disable' : 'Enable'}
+            </button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={showDeleteDialog} onOpenChange={() => setShowDeleteDialog(false)}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle> Delete User</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete this user? This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="sm:justify-start gap-2">
+            <DialogClose asChild>
+              <button type="button" className="px-4 py-2 border rounded hover:bg-gray-100">
+                Cancel
+              </button>
+            </DialogClose>
+            <button
+              onClick={() => {
+                if (deleteUser) {
+                  handleDeleteUser(deleteUser)
+                }
+              }}
+              className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+              disabled={isDeleteLoading}
+            >
+              {isDeleteLoading ? <Loader /> : 'Delete'}
+            </button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   )
 }

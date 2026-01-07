@@ -50,6 +50,7 @@ export async function POST(req: NextRequest) {
       city_id: body.city,
       zip_code: body.zipCode,
       role_id: golferRoleId,
+      account_type: body.accountType,
     }
 
     // Insert user

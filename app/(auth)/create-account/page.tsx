@@ -16,6 +16,9 @@ import Loader from '@/components/website/loaders/Loader'
 import { useSelector } from 'react-redux'
 
 const constraints = {
+  accountType: {
+    presence: true,
+  },
   firstName: {
     presence: true,
   },
@@ -104,13 +107,19 @@ const Page = () => {
       <div className="mx-auto max-w-[1408px] min-h-[97vh] flex items-center border border-[#EAECF0] bg-white px-3">
         {/* Left */}
         <div
-          className="w-full hidden md:block max-w-[611px] h-[95vh]"
+          className="w-full hidden md:flex flex-col justify-between max-w-[611px] h-[95vh] p-5"
           style={{
-            backgroundImage: "url('/auth/auth-hero.png')",
+            backgroundImage:
+              "url('/auth/auth-hero.png'), linear-gradient(179.58deg, rgba(0, 0, 0, 0) 27.02%, rgba(0, 0, 0, 0.8) 99.64%)",
             backgroundSize: 'cover',
             backgroundPosition: 'center',
           }}
-        ></div>
+        >
+          <p className="auth-bg-title">G4C Community</p>
+          <p className="auth-bg-desc">
+            Connecting Golfers <br /> <span>Empowering</span> Communities
+          </p>
+        </div>
 
         {/* Right */}
         <div className="w-full flex flex-col items-center justify-center">
@@ -121,6 +130,27 @@ const Page = () => {
               validate={validateForm}
               render={({ handleSubmit, form, submitting }) => (
                 <form onSubmit={handleSubmit}>
+                  <Select
+                    name="accountType"
+                    label="Account Type"
+                    placeholder="Select an account type"
+                    form={form}
+                    options={[
+                      { label: 'Golfer', value: 'Golfer' },
+                      {
+                        label: 'Golf Teaching Professional',
+                        value: 'Golf Teaching Professional',
+                      },
+                      { label: 'Tournament Director', value: 'Tournament Director' },
+                      { label: 'Non Profit Organization', value: 'Non Profit Organization' },
+                      { label: 'Business Owner', value: 'Business Owner' },
+                      {
+                        label: 'Early Thanksgiving Day Golf',
+                        value: 'Early Thanksgiving Day Golf',
+                      },
+                      { label: 'Church Owner', value: 'Church Owner' },
+                    ]}
+                  />
                   <Input
                     label="First Name"
                     name="firstName"

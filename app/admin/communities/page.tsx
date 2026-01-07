@@ -9,7 +9,7 @@ import {
 } from '@/components/ui/breadcrumb'
 import { Separator } from '@/components/ui/separator'
 import { SidebarTrigger } from '@/components/ui/sidebar'
-import { BadgeCheck, Plus, Trash2 } from 'lucide-react'
+import { BadgeCheck, Plus, ShieldBan, SquarePen, Trash2 } from 'lucide-react'
 import {
   Sheet,
   SheetContent,
@@ -19,7 +19,6 @@ import {
 } from '@/components/ui/sheet'
 import { useEffect, useState } from 'react'
 import rtkMutation from '@/utils/rtkMutation'
-import { useRegisterCommunityMutation } from '@/service/community.service'
 import { validate } from 'validate.js'
 import { showAlert } from '@/utils/showAlert'
 import { getErrorMessage } from '@/utils/formatErrorResponse'
@@ -37,11 +36,25 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { GoDotFill } from 'react-icons/go'
 import { PiDotsThreeOutlineLight } from 'react-icons/pi'
-import { useGetCommunitiesQuery } from '@/service/community.service'
+import {
+  useGetCommunitiesQuery,
+  useUpdateCommunityMutation,
+  useRegisterCommunityMutation,
+  useToggleCommunityStatusMutation,
+} from '@/service/community.service'
 import Textarea from '@/components/auth/Textarea'
 import { useUsersQuery } from '@/service/data.service'
 import { useSelector } from 'react-redux'
 import type { FormApi } from 'final-form'
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
 
 const constraints = {
   name: {
@@ -69,6 +82,7 @@ interface Community {
   timezone: string
   activity: string
   created_at: string
+  member_user_id?: string
 }
 
 interface UserState {
@@ -83,6 +97,9 @@ interface RootState {
 
 export default function Page() {
   const [isSheetOpen, setIsSheetOpen] = useState(false)
+  const [selectedCommunity, setSelectedCommunity] = useState<Community | null>(null)
+  const [isEditSheetOpen, setIsEditSheetOpen] = useState(false)
+  const [communityToDisable, setCommunityToDisable] = useState<Community | null>(null)
   const [page, setPage] = useState(1)
   const [filtersVal, setFiltersVal] = useState<Record<string, string>>({})
   const { data: usersData } = useUsersQuery({})
@@ -125,6 +142,46 @@ export default function Page() {
       showAlert(getErrorMessage(error), 'error')
     }
   }, [isSuccess, error, formApi])
+
+  const [updateCommunity, { isSuccess: isUpdateSuccess, error: updateError }] =
+    useUpdateCommunityMutation()
+
+  const onUpdateSubmit = async (values: onSubmitProps) => {
+    const payload = {
+      id: selectedCommunity?.id,
+      ...values,
+    }
+    await rtkMutation(updateCommunity, payload)
+    setIsEditSheetOpen(false)
+  }
+
+  useEffect(() => {
+    if (isUpdateSuccess) {
+      showAlert('Update successful!', 'success')
+      formApi?.reset()
+    } else if (updateError) {
+      showAlert(getErrorMessage(updateError), 'error')
+    }
+  }, [isUpdateSuccess, updateError, formApi])
+
+  const [toggleCommunityStatus, { isLoading: isToggleLoading }] = useToggleCommunityStatusMutation()
+  const handleDisableCommunity = async () => {
+    if (communityToDisable) {
+      // Add your disable mutation here
+      await toggleCommunityStatus({ id: communityToDisable.id, type: 'disable' })
+      showAlert(`Community "${communityToDisable.name}" has been disabled`, 'success')
+      setCommunityToDisable(null)
+    }
+  }
+
+  const handleEnableCommunity = async () => {
+    if (communityToDisable) {
+      // Add your disable mutation here
+      await toggleCommunityStatus({ id: communityToDisable.id, type: 'enable' })
+      showAlert(`Community "${communityToDisable.name}" has been enabled`, 'success')
+      setCommunityToDisable(null)
+    }
+  }
 
   const communities: Community[] = communitiesData || []
   const timezoneOptions = Intl.supportedValuesOf('timeZone').map((tz) => ({
@@ -260,16 +317,21 @@ export default function Page() {
         sideOffset={4}
       >
         <DropdownMenuGroup>
-          <DropdownMenuItem onClick={() => console.log('Edit', community)}>
-            <BadgeCheck className="mr-2" />
+          <DropdownMenuItem
+            onClick={() => {
+              setSelectedCommunity(community)
+              setIsEditSheetOpen(true)
+            }}
+          >
+            <SquarePen className="mr-2" />
             Edit Community
           </DropdownMenuItem>
           <DropdownMenuItem
-            onClick={() => console.log('Delete', community)}
+            onClick={() => setCommunityToDisable(community)}
             className="text-red-600"
           >
-            <Trash2 className="mr-2" />
-            Delete Community
+            <ShieldBan className="mr-2" />
+            {community?.status === 1 ? 'Disable' : 'Enable'} Community
           </DropdownMenuItem>
         </DropdownMenuGroup>
       </DropdownMenuContent>
@@ -394,6 +456,118 @@ export default function Page() {
           </SheetHeader>
         </SheetContent>
       </Sheet>
+
+      <Sheet open={isEditSheetOpen} onOpenChange={setIsEditSheetOpen}>
+        <SheetContent className="overflow-auto">
+          <SheetHeader>
+            <SheetTitle>Update Community</SheetTitle>
+            <SheetDescription></SheetDescription>
+            <Form
+              onSubmit={onUpdateSubmit}
+              validate={validateForm}
+              initialValues={
+                selectedCommunity
+                  ? {
+                      name: selectedCommunity.name,
+                      description: selectedCommunity.description,
+                      captain: selectedCommunity.member_user_id,
+                      timezone: selectedCommunity.timezone,
+                    }
+                  : {}
+              }
+              render={({ handleSubmit, form, submitting }) => {
+                return (
+                  <form onSubmit={handleSubmit}>
+                    <Input
+                      label="Community Name"
+                      name="name"
+                      type="text"
+                      placeholder="Enter community Name"
+                      form={form}
+                    />
+                    <Textarea
+                      label="Description"
+                      name="description"
+                      placeholder="Enter Description"
+                      form={form}
+                    />
+                    <Select
+                      label="Select Captain"
+                      name="captain"
+                      placeholder="Select Captain"
+                      form={form}
+                      options={
+                        usersData?.map(
+                          (user: {
+                            id: number
+                            first_name: string
+                            last_name: string
+                            email: string
+                          }) => ({
+                            label: `${user.first_name} ${user.last_name} (${user.email})`,
+                            value: user.id,
+                          })
+                        ) || []
+                      }
+                    />
+                    <Select
+                      label="Select Timezone"
+                      name="timezone"
+                      placeholder="Select Timezone"
+                      form={form}
+                      options={timezoneOptions}
+                    />
+
+                    <button
+                      type="submit"
+                      className="auth-submit w-full max-w-[490px] h-[49px] py-1 px-2 mt-4 cursor-pointer"
+                      disabled={submitting}
+                    >
+                      {submitting ? <Loader /> : 'Update Community'}
+                    </button>
+                  </form>
+                )
+              }}
+            />
+          </SheetHeader>
+        </SheetContent>
+      </Sheet>
+
+      <Dialog open={!!communityToDisable} onOpenChange={() => setCommunityToDisable(null)}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>
+              {communityToDisable?.status === 1 ? 'Disable' : 'Enable'} Community
+            </DialogTitle>
+            <DialogDescription>
+              Are you sure you want to {communityToDisable?.status === 1 ? 'disable' : 'enable'}{' '}
+              {communityToDisable?.name}? This action will make the community inactive.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="sm:justify-start gap-2">
+            <DialogClose asChild>
+              <button type="button" className="px-4 py-2 border rounded hover:bg-gray-100">
+                Cancel
+              </button>
+            </DialogClose>
+            <button
+              onClick={
+                communityToDisable?.status === 1 ? handleDisableCommunity : handleEnableCommunity
+              }
+              className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+              disabled={isToggleLoading}
+            >
+              {isToggleLoading ? (
+                <Loader />
+              ) : communityToDisable?.status === 1 ? (
+                'Disable'
+              ) : (
+                'Enable'
+              )}
+            </button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   )
 }

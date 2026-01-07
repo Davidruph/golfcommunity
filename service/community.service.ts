@@ -30,7 +30,28 @@ const userApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ['community'],
     }),
+    updateCommunity: builder.mutation({
+      query: (communityData) => ({
+        url: COMMUNITIES,
+        method: 'PATCH',
+        body: communityData,
+      }),
+      invalidatesTags: ['community'],
+    }),
+    toggleCommunityStatus: builder.mutation({
+      query: (communityData) => ({
+        url: `${COMMUNITIES}/${communityData.id}`,
+        method: 'PATCH',
+        body: communityData,
+      }),
+      invalidatesTags: ['community'],
+    }),
   }),
 })
 
-export const { useGetCommunitiesQuery, useRegisterCommunityMutation } = userApiSlice
+export const {
+  useGetCommunitiesQuery,
+  useRegisterCommunityMutation,
+  useUpdateCommunityMutation,
+  useToggleCommunityStatusMutation,
+} = userApiSlice

@@ -39,7 +39,7 @@ export async function GET(request: Request) {
     }
 
     if (activityFilter) {
-      whereConditions.push('communities.activity = ?')
+      whereConditions.push('community_members.activity = ?')
       queryParams.push(activityFilter)
     }
 
@@ -67,6 +67,8 @@ export async function GET(request: Request) {
     const [rows] = await connection.query<RowDataPacket[]>(
       `SELECT 
         communities.*,
+        community_members.activity,
+        community_members.user_id as member_user_id,
         COUNT(DISTINCT community_members.user_id) as members_count,
         captain_user.email as captain_email
        ${baseQuery}
@@ -143,6 +145,70 @@ export async function POST(req: NextRequest) {
     await connection.query(
       'INSERT INTO community_members (community_id, user_id, role) VALUES (?, ?, ?)',
       [communityId, body.captain, 'captain']
+    )
+
+    connection.release()
+
+    return NextResponse.json(
+      {
+        message: 'Community registered successfully',
+        communityId,
+      },
+      { status: 201 }
+    )
+  } catch (err: unknown) {
+    connection.release()
+    console.error('Registration error:', err)
+
+    return NextResponse.json(
+      {
+        error: 'Database error',
+        message: (err as Error)?.message || 'An error occurred during registration',
+      },
+      { status: 500 }
+    )
+  }
+}
+
+export async function PATCH(req: NextRequest) {
+  const connection = await pool.getConnection()
+
+  try {
+    const body = await req.json()
+
+    // Check if user already exists
+    const [existingCommunity] = (await connection.query(
+      'SELECT id FROM communities WHERE name = ? AND id != ?',
+      [body.name, body.id]
+    )) as [Array<{ id: number }>, unknown]
+
+    if (existingCommunity && existingCommunity.length > 0) {
+      connection.release()
+      return NextResponse.json(
+        { error: 'Community with this name already exists' },
+        { status: 409 }
+      )
+    }
+
+    // Prepare user data
+    const communityData = {
+      name: body.name,
+      description: body.description,
+      timezone: body.timezone,
+    }
+
+    // Insert user
+    const [Result] = (await connection.query('UPDATE communities SET ? WHERE id = ?', [
+      communityData,
+      body.id,
+    ])) as [{ insertId: number; affectedRows: number }, unknown]
+
+    const communityId = body.id
+
+    // Add captain as community member
+    await connection.query(
+      'UPDATE community_members SET user_id = ?, role = ? WHERE community_id = ?',
+      [body.captain, 'captain', body.id]
     )
 
     connection.release()

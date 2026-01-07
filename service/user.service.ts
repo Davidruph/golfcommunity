@@ -1,5 +1,5 @@
 import apiSlice from './apiSlice'
-import { USERS } from './constants'
+import { USERS, CHANGE_STATUS } from './constants'
 
 const userApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
@@ -22,7 +22,45 @@ const userApiSlice = apiSlice.injectEndpoints({
       },
       providesTags: ['user'],
     }),
+    registerUser: builder.mutation({
+      query: (userData) => ({
+        url: USERS,
+        method: 'POST',
+        body: userData,
+      }),
+      invalidatesTags: ['user'],
+    }),
+    updateUser: builder.mutation({
+      query: (userData) => ({
+        url: `${USERS}/${userData.id}`,
+        method: 'PATCH',
+        body: userData,
+      }),
+      invalidatesTags: ['user'],
+    }),
+    deleteUser: builder.mutation({
+      query: (userData) => ({
+        url: `${USERS}/${userData.id}`,
+        method: 'DELETE',
+        body: userData,
+      }),
+      invalidatesTags: ['user'],
+    }),
+    toggleUserStatus: builder.mutation({
+      query: (userData) => ({
+        url: `${CHANGE_STATUS}/${userData.id}`,
+        method: 'PATCH',
+        body: userData,
+      }),
+      invalidatesTags: ['user'],
+    }),
   }),
 })
 
-export const { useGetUsersQuery } = userApiSlice
+export const {
+  useGetUsersQuery,
+  useRegisterUserMutation,
+  useUpdateUserMutation,
+  useDeleteUserMutation,
+  useToggleUserStatusMutation,
+} = userApiSlice
