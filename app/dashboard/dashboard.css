@@ -113,3 +113,27 @@
   letter-spacing: 0%;
   color: #5d6776;
 }
+.dashboard-card-title {
+  font-family: Geist;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 0%;
+  color: #000000;
+}
+.dashboard-card-value {
+  font-family: Geist;
+  font-weight: 500;
+  font-size: 64px;
+  line-height: 100%;
+  letter-spacing: 0%;
+  color: #000000;
+}
+.dashboard-card-stat {
+  font-family: Geist;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 0%;
+  color: #000000;
+}
