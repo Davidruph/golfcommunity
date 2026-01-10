@@ -272,7 +272,7 @@ export default function Page() {
     {
       key: 'search',
       type: 'search',
-      placeholder: 'Search users by name or email...',
+      placeholder: 'Search communities...',
       onChange: (value) => console.log('Search:', value),
     },
     {

@@ -175,6 +175,7 @@ export async function PATCH(req: NextRequest) {
 
   try {
     const body = await req.json()
+    console.log('PATCH body:', body)
 
     // Check if user already exists
     const [existingCommunity] = (await connection.query(
@@ -205,11 +206,19 @@ export async function PATCH(req: NextRequest) {
 
     const communityId = body.id
 
-    // Add captain as community member
-    await connection.query(
-      'UPDATE community_members SET user_id = ?, role = ? WHERE community_id = ?',
-      [body.captain, 'captain', body.id]
-    )
+    // Update captain: try UPDATE first, if no rows affected then INSERT
+    const [updateResult] = await connection.query(
+      'UPDATE community_members SET user_id = ? WHERE community_id = ? AND role = ?',
+      [body.captain, communityId, 'captain']
+    ) as [{ affectedRows: number }, unknown]
+    
+    // If no rows were updated, insert new captain
+    if (updateResult.affectedRows === 0) {
+      await connection.query(
+        'INSERT INTO community_members (community_id, user_id, role) VALUES (?, ?, ?)',
+        [communityId, body.captain, 'captain']
+      )
+    }
 
     connection.release()
 
