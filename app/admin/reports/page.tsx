@@ -1,5 +1,4 @@
 'use client'
-import Button from '@/components/admin/Button'
 import { Button as CustomButton } from '@/components/ui/button'
 import PageTitle from '@/components/admin/PageTitle'
 import {
@@ -10,7 +9,7 @@ import {
 } from '@/components/ui/breadcrumb'
 import { Separator } from '@/components/ui/separator'
 import { SidebarTrigger } from '@/components/ui/sidebar'
-import { Download, ScanSearch } from 'lucide-react'
+import { Download } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
@@ -265,10 +264,6 @@ export default function Page() {
     },
   })
 
-  const router = useRouter()
-  const addUser = () => {
-    router.push('/admin/users')
-  }
   const exportData = () => {
     console.log('Exporting data...')
   }
