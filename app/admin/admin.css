@@ -185,3 +185,43 @@
   letter-spacing: 0%;
   color: #4d4d4d;
 }
+.admin-card-title {
+  font-family: Geist;
+  font-weight: 500;
+  font-size: 15px;
+  line-height: 120%;
+  letter-spacing: 0%;
+  color: #808080;
+}
+.admin-card-details {
+  font-family: Geist;
+  font-weight: 500;
+  font-size: 15px;
+  line-height: 120%;
+  letter-spacing: 0%;
+  color: #4d4d4d;
+}
+.admin-card-header {
+  font-family: Geist;
+  font-weight: 600;
+  font-size: 23px;
+  line-height: 120%;
+  letter-spacing: 0%;
+  color: #1a1a1a;
+}
+.stats-title {
+  font-family: Geist;
+  font-weight: 600;
+  font-size: 15px;
+  line-height: 120%;
+  letter-spacing: 0%;
+  color: #4d4d4d;
+}
+.chart-title {
+  font-family: Geist;
+  font-weight: 600;
+  font-size: 15px;
+  line-height: 120%;
+  letter-spacing: 0%;
+  color: #4d4d4d;
+}
