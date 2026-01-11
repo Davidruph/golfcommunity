@@ -4,7 +4,7 @@ type CardProps = {
   title: string
   value: string | number
   stat: string
-  icon: React.ReactNode
+  icon?: React.ReactNode
   bgIcon: string
 }
 const Card = ({ title, value, stat, icon, bgIcon }: CardProps) => {
