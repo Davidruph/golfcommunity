@@ -19,7 +19,19 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json()
-    const { email, password } = body
+    const { email, password, recaptchaToken } = body
+
+    const secretKey = process.env.RECAPTCHA_SECRET_KEY
+
+    const verifyRes = await fetch(
+      `https://www.google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${recaptchaToken}`,
+      { method: 'POST' }
+    )
+    const verifyData = await verifyRes.json()
+
+    if (!verifyData.success) {
+      return NextResponse.json({ error: 'reCAPTCHA verification failed' }, { status: 400 })
+    }
 
     if (!email || !password) {
       return NextResponse.json({ error: 'Email and password are required' }, { status: 400 })
