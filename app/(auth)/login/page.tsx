@@ -12,7 +12,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { updateUser } from '@/redux/slices/user.slice'
 import rtkMutation from '@/utils/rtkMutation'
 import Loader from '@/components/website/loaders/Loader'
-import ReCAPTCHA from 'react-google-recaptcha'
+// import ReCAPTCHA from 'react-google-recaptcha'
 
 const constraints = {
   email: {
@@ -48,8 +48,8 @@ interface RootState {
 }
 
 const Page = () => {
-  const recaptchaRef = useRef<ReCAPTCHA>(null)
-  const [credential, setCredential] = useState<string | null>(null)
+  // const recaptchaRef = useRef<ReCAPTCHA>(null)
+  // const [credential, setCredential] = useState<string | null>(null)
 
   const router = useRouter()
   const { user, token } = useSelector((state: RootState) => state.user)
@@ -73,10 +73,10 @@ const Page = () => {
   const [login, { isSuccess, error, data }] = useLoginMutation({})
 
   const onSubmit = async (values: onSubmitProps) => {
-    if (!credential) {
-      showAlert('Please verify that you are not a robot', 'error')
-      return
-    }
+    // if (!credential) {
+    //   showAlert('Please verify that you are not a robot', 'error')
+    //   return
+    // }
     await rtkMutation(login, values)
   }
 
@@ -148,11 +148,11 @@ const Page = () => {
                     form={form}
                   />
 
-                  <ReCAPTCHA
+                  {/* <ReCAPTCHA
                     sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY!}
                     ref={recaptchaRef}
                     onChange={(value: string | null) => setCredential(value)}
-                  />
+                  /> */}
 
                   <button
                     type="submit"
