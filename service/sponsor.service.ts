@@ -1,66 +1,64 @@
 import apiSlice from './apiSlice'
-import { USERS, CHANGE_USER_STATUS } from './constants'
+import { CHANGE_SPONSOR_STATUS, SPONSORS } from './constants'
 
-const userApiSlice = apiSlice.injectEndpoints({
+const sponsorApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
-    getUsers: builder.query({
+    getSponsors: builder.query({
       query: (params = {}) => {
         const searchParams = new URLSearchParams()
         if (params.page) searchParams.append('page', params.page.toString())
         if (params.limit) searchParams.append('limit', params.limit.toString())
         if (params.search) searchParams.append('search', params.search)
-        if (params.role) searchParams.append('role', params.role)
         if (params.status) searchParams.append('status', params.status)
-        if (params.membership) searchParams.append('membership', params.membership)
+        if (params.donation_range) searchParams.append('donation_range', params.donation_range)
 
         const queryString = searchParams.toString()
 
         return {
-          url: queryString ? `${USERS}?${queryString}` : USERS,
+          url: queryString ? `${SPONSORS}?${queryString}` : SPONSORS,
           method: 'GET',
         }
       },
-      providesTags: ['user'],
+      providesTags: ['sponsor'],
     }),
-    registerUser: builder.mutation({
+    registerSponsor: builder.mutation({
       query: (userData) => ({
-        url: USERS,
+        url: SPONSORS,
         method: 'POST',
         body: userData,
       }),
-      invalidatesTags: ['user'],
+      invalidatesTags: ['sponsor'],
     }),
-    updateUser: builder.mutation({
+    updateSponsor: builder.mutation({
       query: (userData) => ({
-        url: `${USERS}/${userData.id}`,
+        url: `${SPONSORS}/${userData.id}`,
         method: 'PATCH',
         body: userData,
       }),
-      invalidatesTags: ['user'],
+      invalidatesTags: ['sponsor'],
     }),
-    deleteUser: builder.mutation({
+    deleteSponsor: builder.mutation({
       query: (userData) => ({
-        url: `${USERS}/${userData.id}`,
+        url: `${SPONSORS}/${userData.id}`,
         method: 'DELETE',
         body: userData,
       }),
-      invalidatesTags: ['user'],
+      invalidatesTags: ['sponsor'],
     }),
-    toggleUserStatus: builder.mutation({
+    toggleSponsorStatus: builder.mutation({
       query: (userData) => ({
-        url: `${CHANGE_USER_STATUS}/${userData.id}`,
+        url: `${CHANGE_SPONSOR_STATUS}/${userData.id}`,
         method: 'PATCH',
         body: userData,
       }),
-      invalidatesTags: ['user'],
+      invalidatesTags: ['sponsor'],
     }),
   }),
 })
 
 export const {
-  useGetUsersQuery,
-  useRegisterUserMutation,
-  useUpdateUserMutation,
-  useDeleteUserMutation,
-  useToggleUserStatusMutation,
-} = userApiSlice
+  useGetSponsorsQuery,
+  useRegisterSponsorMutation,
+  useUpdateSponsorMutation,
+  useToggleSponsorStatusMutation,
+} = sponsorApiSlice

@@ -460,6 +460,7 @@ export default function Page() {
                       form={form}
                       options={[
                         { label: 'Golfer', value: 'Golfer' },
+                        { label: 'Sponsor', value: 'Sponsor' },
                         {
                           label: 'Golf Teaching Professional',
                           value: 'Golf Teaching Professional',
@@ -606,6 +607,7 @@ export default function Page() {
                       form={form}
                       options={[
                         { label: 'Golfer', value: 'Golfer' },
+                        { label: 'Sponsor', value: 'Sponsor' },
                         {
                           label: 'Golf Teaching Professional',
                           value: 'Golf Teaching Professional',

@@ -70,7 +70,7 @@ const Page = () => {
     return validate(values, constraints) || {}
   }
 
-  const [login, { isSuccess, error, data }] = useLoginMutation({})
+  const [login, { isSuccess, error, data, isLoading }] = useLoginMutation({})
 
   const onSubmit = async (values: onSubmitProps) => {
     // if (!credential) {
@@ -157,9 +157,9 @@ const Page = () => {
                   <button
                     type="submit"
                     className="auth-submit w-full max-w-[490px] h-[49px] py-1 px-2 mt-4"
-                    disabled={submitting}
+                    disabled={submitting || isLoading}
                   >
-                    {submitting ? <Loader /> : 'Login'}
+                    {submitting || isLoading ? <Loader /> : 'Login'}
                   </button>
                 </form>
               )}

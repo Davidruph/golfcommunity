@@ -1,66 +1,63 @@
 import apiSlice from './apiSlice'
-import { USERS, CHANGE_USER_STATUS } from './constants'
+import { CAMPAIGNS, CHANGE_CAMPAIGN_STATUS } from './constants'
 
-const userApiSlice = apiSlice.injectEndpoints({
+const campaignApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
-    getUsers: builder.query({
+    getCampaigns: builder.query({
       query: (params = {}) => {
         const searchParams = new URLSearchParams()
         if (params.page) searchParams.append('page', params.page.toString())
         if (params.limit) searchParams.append('limit', params.limit.toString())
         if (params.search) searchParams.append('search', params.search)
-        if (params.role) searchParams.append('role', params.role)
         if (params.status) searchParams.append('status', params.status)
-        if (params.membership) searchParams.append('membership', params.membership)
 
         const queryString = searchParams.toString()
 
         return {
-          url: queryString ? `${USERS}?${queryString}` : USERS,
+          url: queryString ? `${CAMPAIGNS}?${queryString}` : CAMPAIGNS,
           method: 'GET',
         }
       },
-      providesTags: ['user'],
+      providesTags: ['campaign'],
     }),
-    registerUser: builder.mutation({
+    registerCampaign: builder.mutation({
       query: (userData) => ({
-        url: USERS,
+        url: CAMPAIGNS,
         method: 'POST',
         body: userData,
       }),
-      invalidatesTags: ['user'],
+      invalidatesTags: ['campaign'],
     }),
-    updateUser: builder.mutation({
+    updateCampaign: builder.mutation({
       query: (userData) => ({
-        url: `${USERS}/${userData.id}`,
+        url: `${CAMPAIGNS}/${userData.id}`,
         method: 'PATCH',
         body: userData,
       }),
-      invalidatesTags: ['user'],
+      invalidatesTags: ['campaign'],
     }),
-    deleteUser: builder.mutation({
+    deleteCampaign: builder.mutation({
       query: (userData) => ({
-        url: `${USERS}/${userData.id}`,
+        url: `${CAMPAIGNS}/${userData.id}`,
         method: 'DELETE',
         body: userData,
       }),
-      invalidatesTags: ['user'],
+      invalidatesTags: ['campaign'],
     }),
-    toggleUserStatus: builder.mutation({
+    toggleCampaignStatus: builder.mutation({
       query: (userData) => ({
-        url: `${CHANGE_USER_STATUS}/${userData.id}`,
+        url: `${CHANGE_CAMPAIGN_STATUS}/${userData.id}`,
         method: 'PATCH',
         body: userData,
       }),
-      invalidatesTags: ['user'],
+      invalidatesTags: ['campaign'],
     }),
   }),
 })
 
 export const {
-  useGetUsersQuery,
-  useRegisterUserMutation,
-  useUpdateUserMutation,
-  useDeleteUserMutation,
-  useToggleUserStatusMutation,
-} = userApiSlice
+  useGetCampaignsQuery,
+  useRegisterCampaignMutation,
+  useUpdateCampaignMutation,
+  useToggleCampaignStatusMutation,
+} = campaignApiSlice

@@ -55,7 +55,7 @@ const baseData = {
       icon: captains,
     },
     {
-      name: 'Sponors',
+      name: 'Sponsors',
       url: '/admin/sponsors',
       icon: sponsors,
     },

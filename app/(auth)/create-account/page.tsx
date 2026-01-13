@@ -137,6 +137,7 @@ const Page = () => {
                     form={form}
                     options={[
                       { label: 'Golfer', value: 'Golfer' },
+                      { label: 'Sponsor', value: 'Sponsor' },
                       {
                         label: 'Golf Teaching Professional',
                         value: 'Golf Teaching Professional',
