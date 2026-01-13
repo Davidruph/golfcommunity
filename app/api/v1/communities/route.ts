@@ -188,6 +188,8 @@ export async function POST(req: NextRequest) {
       },
       { status: 500 }
     )
+  } finally {
+    connection.release()
   }
 }
 
@@ -310,5 +312,7 @@ export async function PATCH(req: NextRequest) {
       },
       { status: 500 }
     )
+  } finally {
+    connection.release()
   }
 }

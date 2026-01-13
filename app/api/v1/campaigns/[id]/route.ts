@@ -1,9 +1,8 @@
-import { unlink } from 'fs/promises'
+import { unlink, writeFile } from 'fs/promises'
 import { join } from 'path'
 import pool from '@/lib/db'
 import { NextResponse, NextRequest } from 'next/server'
 import type { RowDataPacket } from 'mysql2'
-import { writeFile as fsWriteFile } from 'fs/promises'
 
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const connection = await pool.getConnection()
@@ -39,7 +38,6 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     ])) as [Array<RowDataPacket>, unknown]
 
     if (!existingCampaigns || existingCampaigns.length === 0) {
-      connection.release()
       return NextResponse.json({ error: 'Campaign not found' }, { status: 404 })
     }
 
@@ -53,7 +51,6 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
       )) as [Array<RowDataPacket>, unknown]
 
       if (duplicateCampaign && duplicateCampaign.length > 0) {
-        connection.release()
         return NextResponse.json(
           { error: 'Campaign with this title already exists' },
           { status: 409 }
@@ -105,8 +102,6 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     // Update database
     await connection.query('UPDATE campaigns SET ? WHERE id = ?', [campaignData, id])
 
-    connection.release()
-
     return NextResponse.json(
       {
         message: 'Campaign updated successfully',
@@ -115,7 +110,6 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
       { status: 200 }
     )
   } catch (err: unknown) {
-    connection.release()
     console.error('Campaign update error:', err)
 
     return NextResponse.json(
@@ -125,8 +119,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
       },
       { status: 500 }
     )
+  } finally {
+    connection.release()
   }
-}
-async function writeFile(filepath: string, buffer: Buffer) {
-  await fsWriteFile(filepath, buffer)
 }
