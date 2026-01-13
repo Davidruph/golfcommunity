@@ -217,7 +217,7 @@ export default function Page() {
 
     const apiUrl = enviroment.API_BASE_URL
     axios
-      .patch(`${apiUrl}/communities`, formData, {
+      .patch(`${apiUrl}/communities/update`, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'multipart/form-data',
