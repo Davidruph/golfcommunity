@@ -1,7 +1,7 @@
 'use client'
 import { FormApi } from 'final-form/dist/types'
 import { Field, FieldInputProps } from 'react-final-form'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Image from 'next/image'
 
 type ImageSelectorProps = {
@@ -10,6 +10,7 @@ type ImageSelectorProps = {
   form: FormApi
   className?: string
   accept?: string
+  existingImage?: string
 }
 
 const ImageSelector = ({
@@ -18,9 +19,18 @@ const ImageSelector = ({
   form,
   className = '',
   accept = 'image/*',
+  existingImage,
 }: ImageSelectorProps) => {
   const [preview, setPreview] = useState<string | null>(null)
   const [fileName, setFileName] = useState<string>('')
+
+  // Set existing image as preview on mount
+  useEffect(() => {
+    if (existingImage) {
+      setPreview(existingImage)
+      setFileName('Current image')
+    }
+  }, [existingImage])
 
   const handleFileChange = (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -43,8 +53,14 @@ const ImageSelector = ({
   }
 
   const clearImage = (input: FieldInputProps<File | null>) => {
-    setPreview(null)
-    setFileName('')
+    // If there's an existing image, revert to it
+    if (existingImage) {
+      setPreview(existingImage)
+      setFileName('Current image')
+    } else {
+      setPreview(null)
+      setFileName('')
+    }
     input.onChange(null)
   }
 
@@ -94,13 +110,21 @@ const ImageSelector = ({
                 </div>
                 <div className="mt-2 flex items-center justify-between">
                   <span className="text-sm text-gray-600 truncate flex-1">{fileName}</span>
-                  <button
-                    type="button"
-                    onClick={() => clearImage(input)}
-                    className="ml-2 text-red-600 hover:text-red-800 text-sm font-medium"
-                  >
-                    Remove
-                  </button>
+                  <div className="flex gap-2">
+                    <label
+                      htmlFor={name}
+                      className="ml-2 text-blue-600 hover:text-blue-800 text-sm font-medium cursor-pointer"
+                    >
+                      Change
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => clearImage(input)}
+                      className="text-red-600 hover:text-red-800 text-sm font-medium"
+                    >
+                      {existingImage ? 'Reset' : 'Remove'}
+                    </button>
+                  </div>
                 </div>
               </div>
             )}

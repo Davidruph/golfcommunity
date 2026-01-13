@@ -83,7 +83,7 @@ export async function GET(request: Request) {
 
     return NextResponse.json(
       {
-        campaigns: rows,
+        data: rows,
         pagination: {
           page,
           limit,
