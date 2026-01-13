@@ -48,6 +48,7 @@
     "validate.js": "^0.13.1"
   },
   "devDependencies": {
+    "@next/bundle-analyzer": "^16.1.1",
     "@types/bcryptjs": "^2.4.6",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^20",
