@@ -132,12 +132,15 @@ export default function Page() {
     // Create FormData to properly send file
     const formData = new FormData()
 
+    const isFile = (value: unknown): value is File => {
+      return typeof File !== 'undefined' && value instanceof File
+    }
     // Append all form fields to FormData
     Object.keys(values).forEach((key) => {
       const value = values[key]
       if (value !== undefined && value !== null) {
         // If it's a File object, append it as-is
-        if (value instanceof File) {
+        if (isFile(value)) {
           formData.append(key, value)
         } else {
           // For other values, convert to string
@@ -164,7 +167,8 @@ export default function Page() {
         }
       })
       .catch((err) => {
-        showAlert(err?.response?.data?.message || 'An error occurred', 'error')
+        console.log('Error response:', err?.response)
+        showAlert(err?.response?.data?.error || 'An error occurred', 'error')
         console.log('The error is: ', err)
       })
       .finally(() => {
@@ -181,12 +185,15 @@ export default function Page() {
     // Create FormData to properly send file
     const formData = new FormData()
 
+    const isFile = (value: unknown): value is File => {
+      return typeof File !== 'undefined' && value instanceof File
+    }
     // Append all form fields to FormData
     Object.keys(values).forEach((key) => {
       const value = values[key]
       if (value !== undefined && value !== null) {
         // If it's a File object, append it as-is
-        if (value instanceof File) {
+        if (isFile(value)) {
           formData.append(key, value)
         } else {
           // For other values, convert to string
@@ -432,9 +439,9 @@ export default function Page() {
               onSubmit={onSubmit}
               validate={validateForm}
               render={({ handleSubmit, form, submitting }) => {
-                if (!formApi) {
-                  setFormApi(form)
-                }
+                // if (!formApi) {
+                //   setFormApi(form)
+                // }
                 return (
                   <form onSubmit={handleSubmit}>
                     <Input
