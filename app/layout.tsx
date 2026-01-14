@@ -3,6 +3,7 @@ import { Host_Grotesk, Instrument_Serif, Geist } from 'next/font/google'
 import './globals.css'
 import { ReduxProvider } from '@/provider/Provider'
 import CustomToast from '@/utils/showAlert'
+import { SpeedInsights } from '@vercel/speed-insights/next'
 
 const hostGrotesk = Host_Grotesk({
   variable: '--font-host-grotesk',
@@ -35,6 +36,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <ReduxProvider>
           {children}
           <CustomToast />
+          <SpeedInsights />
         </ReduxProvider>
       </body>
     </html>
