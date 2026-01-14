@@ -1,5 +1,3 @@
-import { unlink, writeFile } from 'fs/promises'
-import { join } from 'path'
 import pool from '@/lib/db'
 import { NextResponse, NextRequest } from 'next/server'
 import type { RowDataPacket } from 'mysql2'
@@ -12,22 +10,22 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     const { id } = await params
 
     // Get FormData instead of JSON
-    const formData = await req.formData()
+    const formData = await req.json()
 
     // Extract fields
-    const sponsoredKids = formData.get('sponsoredKids') as string
-    const targetAmount = formData.get('targetAmount') as string
-    const description = formData.get('description') as string
-    const deadline = formData.get('deadline') as string
-    const campaignTitle = formData.get('campaignTitle') as string
-    const bannerImage = formData.get('bannerImage') as File | null
+    const sponsoredKids = formData.sponsoredKids as string
+    const targetAmount = formData.targetAmount as string
+    const description = formData.description as string
+    const deadline = formData.deadline as string
+    const campaignTitle = formData.campaignTitle as string
+    const bannerImage = formData.bannerImage as string | null
 
     console.log('Received campaign update data:', {
       id,
       sponsoredKids,
       targetAmount,
       description,
-      bannerImage: bannerImage?.name,
+      bannerImage,
       deadline,
       campaignTitle,
     })
@@ -61,32 +59,8 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     // Handle banner image
     let imagePath = existingCampaign.banner_image
 
-    // Check if new image is provided and is a File (not just the existing path)
-    if (bannerImage && bannerImage instanceof File && bannerImage.size > 0) {
-      // Upload new image
-      const bytes = await bannerImage.arrayBuffer()
-      const buffer = Buffer.from(bytes)
-
-      // Generate unique filename
-      const timestamp = Date.now()
-      const filename = `${timestamp}-${bannerImage.name}`
-      const filepath = join(process.cwd(), 'public', 'uploads', 'campaigns', filename)
-
-      // Save file to public directory
-      await writeFile(filepath, buffer)
-      imagePath = `/uploads/campaigns/${filename}`
-
-      // Delete old image if it exists
-      if (existingCampaign.banner_image) {
-        try {
-          const oldImagePath = join(process.cwd(), 'public', existingCampaign.banner_image)
-          await unlink(oldImagePath)
-          console.log('Old image deleted:', existingCampaign.banner_image)
-        } catch (err) {
-          console.error('Error deleting old image:', err)
-          // Continue even if deletion fails
-        }
-      }
+    if (bannerImage && bannerImage !== existingCampaign.banner_image) {
+      imagePath = bannerImage
     }
 
     // Prepare update data

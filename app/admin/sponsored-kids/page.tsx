@@ -18,7 +18,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from '@/components/ui/sheet'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Form } from 'react-final-form'
 import Select from '@/components/auth/Select'
 import Input from '@/components/auth/Input'
@@ -31,7 +31,12 @@ import axios from 'axios'
 import { useSelector } from 'react-redux'
 import { showAlert } from '@/utils/showAlert'
 import enviroment from '@/configuration/siteConfig'
-import { useGetCampaignsQuery, useToggleCampaignStatusMutation } from '@/service/campaign.service'
+import {
+  useGetCampaignsQuery,
+  useRegisterCampaignMutation,
+  useToggleCampaignStatusMutation,
+  useUpdateCampaignMutation,
+} from '@/service/campaign.service'
 import DynamicTable, { TableColumn, TableFilter } from '@/components/table/DynamicTable'
 import { GoDotFill } from 'react-icons/go'
 import {
@@ -52,6 +57,8 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import Image from 'next/image'
+import rtkMutation from '@/utils/rtkMutation'
+import { getErrorMessage } from '@/utils/formatErrorResponse'
 
 const constraints = {
   campaignTitle: {
@@ -117,115 +124,40 @@ export default function Page() {
     status: filtersVal.status || '',
   })
 
-  const addSponsorKids = () => {
+  const addSponsoredKids = () => {
     setIsSheetOpen(true)
   }
 
   const validateForm = (values: onSubmitProps) => {
     return validate(values, constraints) || {}
   }
-
+  const [registerCampaign, { isLoading: isRegistering, isSuccess, error }] =
+    useRegisterCampaignMutation()
   const onSubmit = async (values: onSubmitProps) => {
-    setFormSubmitting(true)
-    console.log('Form Values:', values)
-
-    // Create FormData to properly send file
-    const formData = new FormData()
-
-    const isFile = (value: unknown): value is File => {
-      return typeof File !== 'undefined' && value instanceof File
+    if (!values.bannerImage) {
+      showAlert('Please upload a banner image', 'error')
+      return
     }
-    // Append all form fields to FormData
-    Object.keys(values).forEach((key) => {
-      const value = values[key]
-      if (value !== undefined && value !== null) {
-        // If it's a File object, append it as-is
-        if (isFile(value)) {
-          formData.append(key, value)
-        } else {
-          // For other values, convert to string
-          formData.append(key, String(value))
-        }
-      }
-    })
-
-    const apiUrl = enviroment.API_BASE_URL
-    axios
-      .post(`${apiUrl}/campaigns`, formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'multipart/form-data',
-        },
-      })
-      .then((data) => {
-        if (data?.status === 201) {
-          refetch()
-          console.log('Submitted Successfully!!')
-          showAlert('Campaign Created Successfully', 'success')
-          formApi?.reset()
-          setIsSheetOpen(false)
-        }
-      })
-      .catch((err) => {
-        console.log('Error response:', err?.response)
-        showAlert(err?.response?.data?.error || 'An error occurred', 'error')
-        console.log('The error is: ', err)
-      })
-      .finally(() => {
-        setFormSubmitting(false)
-      })
+    console.log('Form Values:', values)
+    await rtkMutation(registerCampaign, values)
   }
 
+  useEffect(() => {
+    if (isSuccess) {
+      showAlert('Campaign registration successful!', 'success')
+      formApi?.reset()
+    } else if (error) {
+      showAlert(getErrorMessage(error), 'error')
+    }
+  }, [isSuccess, error, formApi])
+
+  const [updateCampaign, { isLoading: isUpdating }] = useUpdateCampaignMutation()
   const onUpdateSubmit = async (values: onSubmitProps) => {
     if (!selectedCampaign) return
-
-    setFormSubmitting(true)
-    console.log('Form Values:', values)
-
-    // Create FormData to properly send file
-    const formData = new FormData()
-
-    const isFile = (value: unknown): value is File => {
-      return typeof File !== 'undefined' && value instanceof File
-    }
-    // Append all form fields to FormData
-    Object.keys(values).forEach((key) => {
-      const value = values[key]
-      if (value !== undefined && value !== null) {
-        // If it's a File object, append it as-is
-        if (isFile(value)) {
-          formData.append(key, value)
-        } else {
-          // For other values, convert to string
-          formData.append(key, String(value))
-        }
-      }
-    })
-
-    const apiUrl = enviroment.API_BASE_URL
-    axios
-      .patch(`${apiUrl}/campaigns/${selectedCampaign.id}`, formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'multipart/form-data',
-        },
-      })
-      .then((data) => {
-        if (data?.status === 200 || data?.status === 204) {
-          refetch()
-          console.log('Updated Successfully!!')
-          showAlert('Campaign Updated Successfully', 'success')
-          setIsEditSheetOpen(false)
-          setSelectedCampaign(null)
-        }
-      })
-      .catch((err) => {
-        showAlert(err?.response?.data?.message || 'An error occurred', 'error')
-        console.log('The error is: ', err)
-      })
-      .finally(() => {
-        setFormSubmitting(false)
-      })
+    await rtkMutation(updateCampaign, { id: selectedCampaign.id, ...values })
+    setIsEditSheetOpen(false)
+    setSelectedCampaign(null)
+    showAlert('Campaign updated successfully!', 'success')
   }
 
   const handleEditCampaign = (campaign: Campaign) => {
@@ -411,7 +343,12 @@ export default function Page() {
             title="Sponsored Kids"
             subTitle="Manage sponsored children, their sponsors, and funded tools."
           />
-          <Button icon={<Plus />} text="Add Sponsor" action={addSponsorKids} width="150px" />
+          <Button
+            icon={<Plus />}
+            text="Add Sponsored Kids"
+            action={addSponsoredKids}
+            width="190px"
+          />
         </div>
         <DynamicTable
           data={campaigns}
@@ -439,11 +376,13 @@ export default function Page() {
               onSubmit={onSubmit}
               validate={validateForm}
               render={({ handleSubmit, form, submitting }) => {
-                // if (!formApi) {
-                //   setFormApi(form)
-                // }
+                if (!formApi) {
+                  setFormApi(form)
+                }
                 return (
                   <form onSubmit={handleSubmit}>
+                    <ImageSelector name="bannerImage" label="Banner Image" form={form} />
+
                     <Input
                       label="Campaign Title"
                       name="campaignTitle"
@@ -493,19 +432,12 @@ export default function Page() {
                       form={form}
                     />
 
-                    <ImageSelector
-                      name="bannerImage"
-                      label="Banner Image"
-                      form={form}
-                      accept="image/png,image/jpeg"
-                    />
-
                     <button
                       type="submit"
                       className="auth-submit w-full max-w-[490px] h-[49px] py-1 px-2 mt-4 cursor-pointer"
-                      disabled={formSubmitting}
+                      disabled={isRegistering || submitting}
                     >
-                      {formSubmitting ? <Loader /> : 'Add Campaign'}
+                      {isRegistering || submitting ? <Loader /> : 'Add Campaign'}
                     </button>
                   </form>
                 )
@@ -538,6 +470,13 @@ export default function Page() {
               render={({ handleSubmit, form, submitting }) => {
                 return (
                   <form onSubmit={handleSubmit}>
+                    <ImageSelector
+                      name="bannerImage"
+                      label="Banner Image"
+                      form={form}
+                      existingImage={selectedCampaign?.banner_image}
+                    />
+
                     <Input
                       label="Campaign Title"
                       name="campaignTitle"
@@ -587,20 +526,12 @@ export default function Page() {
                       form={form}
                     />
 
-                    <ImageSelector
-                      name="bannerImage"
-                      label="Banner Image"
-                      form={form}
-                      accept="image/png,image/jpeg"
-                      existingImage={selectedCampaign?.banner_image}
-                    />
-
                     <button
                       type="submit"
                       className="auth-submit w-full max-w-[490px] h-[49px] py-1 px-2 mt-4 cursor-pointer"
-                      disabled={formSubmitting}
+                      disabled={isUpdating || submitting}
                     >
-                      {formSubmitting ? <Loader /> : 'Update Campaign'}
+                      {isUpdating || submitting ? <Loader /> : 'Update Campaign'}
                     </button>
                   </form>
                 )

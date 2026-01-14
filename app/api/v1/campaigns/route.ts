@@ -1,8 +1,6 @@
 import pool from '@/lib/db'
 import { NextResponse, NextRequest } from 'next/server'
 import type { RowDataPacket } from 'mysql2'
-import { writeFile } from 'fs/promises'
-import { join } from 'path'
 
 export async function GET(request: Request) {
   let connection
@@ -112,21 +110,21 @@ export async function POST(req: NextRequest) {
 
   try {
     // Get FormData instead of JSON
-    const formData = await req.formData()
+    const formData = await req.json()
 
     // Extract fields
-    const sponsoredKids = formData.get('sponsoredKids') as string
-    const targetAmount = formData.get('targetAmount') as string
-    const description = formData.get('description') as string
-    const deadline = formData.get('deadline') as string
-    const campaignTitle = formData.get('campaignTitle') as string
-    const bannerImage = formData.get('bannerImage') as File | null
+    const sponsoredKids = formData.sponsoredKids as string
+    const targetAmount = formData.targetAmount as string
+    const description = formData.description as string
+    const deadline = formData.deadline as string
+    const campaignTitle = formData.campaignTitle as string
+    const bannerImage = formData.bannerImage as File | null
 
     console.log('Received campaign data:', {
       sponsoredKids,
       targetAmount,
       description,
-      bannerImage: bannerImage?.name,
+      bannerImage,
       deadline,
       campaignTitle,
     })
@@ -153,28 +151,12 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // Process and save the image
-    let imagePath = ''
-    if (bannerImage) {
-      const bytes = await bannerImage.arrayBuffer()
-      const buffer = Buffer.from(bytes)
-
-      // Generate unique filename
-      const timestamp = Date.now()
-      const filename = `${timestamp}-${bannerImage.name}`
-      const filepath = join(process.cwd(), 'public', 'uploads', 'campaigns', filename)
-
-      // Save file to public directory
-      await writeFile(filepath, buffer)
-      imagePath = `/uploads/campaigns/${filename}`
-    }
-
     // Insert into database
     const campaignData = {
       sponsored_kid: parseInt(sponsoredKids),
       target_amount: parseFloat(targetAmount),
       description,
-      banner_image: imagePath,
+      banner_image: bannerImage,
       status: 1,
       deadline: new Date(deadline),
       campaign_title: campaignTitle,
@@ -191,7 +173,7 @@ export async function POST(req: NextRequest) {
       {
         message: 'Campaign created successfully',
         campaignId: result.insertId,
-        imagePath,
+        bannerImage,
       },
       { status: 201 }
     )

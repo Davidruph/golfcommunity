@@ -70,9 +70,9 @@ const constraints = {
   timezone: {
     presence: true,
   },
-  bannerImage: {
-    presence: true,
-  },
+  // bannerImage: {
+  //   presence: true,
+  // },
 }
 
 type onSubmitProps = {
@@ -137,109 +137,52 @@ export default function Page() {
     return validate(values, constraints) || {}
   }
 
+  const [registerCommunity, { isSuccess, isLoading: communityLoading, error }] =
+    useRegisterCommunityMutation()
   const onSubmit = async (values: onSubmitProps) => {
-    setFormSubmitting(true)
     console.log('Form Values:', values)
-
-    // Create FormData to properly send file
-    const formData = new FormData()
-
-    const isFile = (value: unknown): value is File => {
-      return typeof File !== 'undefined' && value instanceof File
+    if (!values.bannerImage) {
+      showAlert('Please upload a banner image', 'error')
+      return
     }
-    // Append all form fields to FormData
-    Object.keys(values).forEach((key) => {
-      const value = values[key]
-      if (value !== undefined && value !== null) {
-        // If it's a File object, append it as-is
-        if (isFile(value)) {
-          formData.append(key, value)
-        } else {
-          // For other values, convert to string
-          formData.append(key, String(value))
-        }
-      }
-    })
-    formData.append('created_by', String(user?.id))
-
-    const apiUrl = enviroment.API_BASE_URL
-    axios
-      .post(`${apiUrl}/communities`, formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'multipart/form-data',
-        },
-      })
-      .then((data) => {
-        if (data?.status === 201) {
-          refetch()
-          console.log('Submitted Successfully!!')
-          showAlert('Community Created Successfully', 'success')
-          formApi?.reset()
-          setIsSheetOpen(false)
-        }
-      })
-      .catch((err) => {
-        showAlert(err?.response?.data?.message || 'An error occurred', 'error')
-        console.log('The error is: ', err)
-      })
-      .finally(() => {
-        setFormSubmitting(false)
-      })
+    const createdBy = user?.id || 0
+    values['created_by'] = String(createdBy)
+    setFormApi(formApi)
+    await rtkMutation(registerCommunity, values)
   }
 
+  useEffect(() => {
+    if (isSuccess) {
+      showAlert('Community registration successful!', 'success')
+      formApi?.reset()
+      setIsSheetOpen(false)
+    } else if (error) {
+      showAlert(getErrorMessage(error), 'error')
+    }
+  }, [isSuccess, error, formApi])
+
+  const [
+    updateCommunity,
+    { isLoading: isUpdateLoading, error: updateError, isSuccess: isUpdateSuccess },
+  ] = useUpdateCommunityMutation()
   const onUpdateSubmit = async (values: onSubmitProps) => {
     if (!selectedCommunity) return
-
-    setFormSubmitting(true)
     console.log('Form Values:', values)
 
-    // Create FormData to properly send file
-    const formData = new FormData()
-
-    const isFile = (value: unknown): value is File => {
-      return typeof File !== 'undefined' && value instanceof File
-    }
-    // Append all form fields to FormData
-    Object.keys(values).forEach((key) => {
-      const value = values[key]
-      if (value !== undefined && value !== null) {
-        // If it's a File object, append it as-is
-        if (isFile(value)) {
-          formData.append(key, value)
-        } else {
-          // For other values, convert to string
-          formData.append(key, String(value))
-        }
-      }
-    })
-    formData.append('id', String(selectedCommunity?.id))
-
-    const apiUrl = enviroment.API_BASE_URL
-    axios
-      .patch(`${apiUrl}/communities/update`, formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'multipart/form-data',
-        },
-      })
-      .then((data) => {
-        if (data?.status === 201 || data?.status === 204) {
-          refetch()
-          console.log('Updated Successfully!!')
-          showAlert('Community Updated Successfully', 'success')
-          setIsEditSheetOpen(false)
-          setSelectedCommunity(null)
-        }
-      })
-      .catch((err) => {
-        showAlert(err?.response?.data?.message || 'An error occurred', 'error')
-        console.log('The error is: ', err)
-      })
-      .finally(() => {
-        setFormSubmitting(false)
-      })
+    values['id'] = String(selectedCommunity.id)
+    await rtkMutation(updateCommunity, values)
+    setIsEditSheetOpen(false)
+    setSelectedCommunity(null)
   }
+
+  useEffect(() => {
+    if (isUpdateSuccess) {
+      showAlert('Community updated successfully!', 'success')
+      formApi?.reset()
+    } else if (updateError) {
+      showAlert(getErrorMessage(updateError), 'error')
+    }
+  }, [isUpdateSuccess, updateError, formApi])
 
   const [toggleCommunityStatus, { isLoading: isToggleLoading }] = useToggleCommunityStatusMutation()
   const handleDisableCommunity = async () => {
@@ -498,6 +441,8 @@ export default function Page() {
                 }
                 return (
                   <form onSubmit={handleSubmit}>
+                    <ImageSelector name="bannerImage" label="Banner Image" form={form} />
+
                     <Input
                       label="Community Name"
                       name="name"
@@ -538,19 +483,12 @@ export default function Page() {
                       options={timezoneOptions}
                     />
 
-                    <ImageSelector
-                      name="bannerImage"
-                      label="Banner Image"
-                      form={form}
-                      accept="image/png,image/jpeg"
-                    />
-
                     <button
                       type="submit"
                       className="auth-submit w-full max-w-[490px] h-[49px] py-1 px-2 mt-4 cursor-pointer"
-                      disabled={formSubmitting}
+                      disabled={communityLoading || submitting}
                     >
-                      {formSubmitting ? <Loader /> : 'Create Community'}
+                      {communityLoading ? <Loader /> : 'Create Community'}
                     </button>
                   </form>
                 )
@@ -582,6 +520,13 @@ export default function Page() {
               render={({ handleSubmit, form, submitting }) => {
                 return (
                   <form onSubmit={handleSubmit}>
+                    <ImageSelector
+                      name="bannerImage"
+                      label="Banner Image"
+                      form={form}
+                      existingImage={selectedCommunity?.banner_image}
+                    />
+
                     <Input
                       label="Community Name"
                       name="name"
@@ -622,20 +567,12 @@ export default function Page() {
                       options={timezoneOptions}
                     />
 
-                    <ImageSelector
-                      name="bannerImage"
-                      label="Banner Image"
-                      form={form}
-                      accept="image/png,image/jpeg"
-                      existingImage={selectedCommunity?.banner_image}
-                    />
-
                     <button
                       type="submit"
                       className="auth-submit w-full max-w-[490px] h-[49px] py-1 px-2 mt-4 cursor-pointer"
-                      disabled={formSubmitting}
+                      disabled={isUpdateLoading || submitting}
                     >
-                      {formSubmitting ? <Loader /> : 'Update Community'}
+                      {isUpdateLoading || submitting ? <Loader /> : 'Update Community'}
                     </button>
                   </form>
                 )

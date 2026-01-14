@@ -1,5 +1,6 @@
 'use client'
-import { FormApi } from 'final-form/dist/types'
+
+import { FormApi } from 'final-form'
 import { Field, FieldInputProps } from 'react-final-form'
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
@@ -9,7 +10,6 @@ type ImageSelectorProps = {
   label?: string
   form: FormApi
   className?: string
-  accept?: string
   existingImage?: string
 }
 
@@ -18,42 +18,14 @@ const ImageSelector = ({
   label,
   form,
   className = '',
-  accept = 'image/*',
   existingImage,
 }: ImageSelectorProps) => {
   const [preview, setPreview] = useState<string | null>(null)
   const [fileName, setFileName] = useState<string>('')
+  const [uploading, setUploading] = useState(false)
 
-  // Set existing image as preview on mount
+  // Update preview whenever existingImage changes
   useEffect(() => {
-    if (existingImage) {
-      setPreview(existingImage)
-      setFileName('Current image')
-    }
-  }, [existingImage])
-
-  const handleFileChange = (
-    event: React.ChangeEvent<HTMLInputElement>,
-    input: FieldInputProps<File | null>
-  ) => {
-    const file = event.target.files?.[0]
-    if (file) {
-      setFileName(file.name)
-
-      // Create preview
-      const reader = new FileReader()
-      reader.onloadend = () => {
-        setPreview(reader.result as string)
-      }
-      reader.readAsDataURL(file)
-
-      // Update form value
-      input.onChange(file)
-    }
-  }
-
-  const clearImage = (input: FieldInputProps<File | null>) => {
-    // If there's an existing image, revert to it
     if (existingImage) {
       setPreview(existingImage)
       setFileName('Current image')
@@ -61,66 +33,103 @@ const ImageSelector = ({
       setPreview(null)
       setFileName('')
     }
-    input.onChange(null)
+  }, [existingImage])
+
+  const handleFileChange = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+    input: FieldInputProps<any>
+  ) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    setUploading(true)
+    const formData = new FormData()
+    formData.append('file', file)
+    formData.append('upload_preset', 'communities')
+    formData.append('folder', 'communities')
+
+    try {
+      const res = await fetch(
+        `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`,
+        {
+          method: 'POST',
+          body: formData,
+        }
+      )
+      const data = await res.json()
+      setPreview(data.secure_url)
+      setFileName(file.name)
+      input.onChange(data.secure_url)
+    } catch (error) {
+      console.error('Upload failed:', error)
+    } finally {
+      setUploading(false)
+    }
+  }
+
+  const clearImage = (input: FieldInputProps<any>) => {
+    if (existingImage) {
+      setPreview(existingImage)
+      setFileName('Current image')
+      input.onChange(existingImage)
+    } else {
+      setPreview(null)
+      setFileName('')
+      input.onChange('')
+    }
   }
 
   return (
     <div className="w-full flex flex-col mb-3">
-      <label htmlFor={name} className="auth-label mb-2">
-        {label}
-      </label>
+      <label className="auth-label mb-2">{label}</label>
 
       <Field name={name || ''}>
         {({ input }) => (
           <div className={`relative ${className}`}>
-            <input
-              type="file"
-              id={name}
-              accept={accept}
-              onChange={(e) => handleFileChange(e, input)}
-              className="hidden"
-            />
-
             {!preview ? (
-              <label
-                htmlFor={name}
-                className="flex flex-col items-center justify-center w-full border-2 border-dashed border-[#00000026] rounded-lg py-6 px-4 cursor-pointer hover:border-gray-400 transition-colors max-w-[490px]"
-              >
-                <svg
-                  className="w-12 h-12 text-gray-400 mb-2"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                  />
-                </svg>
-                <span className="text-gray-600 font-medium">Select Image</span>
+              <label className="flex flex-col items-center justify-center w-full border-2 border-dashed border-[#00000026] rounded-lg py-6 px-4 cursor-pointer hover:border-gray-400 transition-colors max-w-[490px]">
+                <span className="text-gray-600 font-medium">
+                  {uploading ? 'Uploading...' : 'Select Image'}
+                </span>
                 <span className="text-gray-400 text-sm mt-1">Click to upload</span>
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={(e) => handleFileChange(e, input)}
+                  disabled={uploading}
+                />
               </label>
             ) : (
               <div className="relative max-w-[490px]">
                 <div className="relative w-full h-48 border border-[#00000026] rounded-lg overflow-hidden">
+                  {uploading && (
+                    <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center z-10">
+                      <div className="text-white font-medium">Uploading...</div>
+                    </div>
+                  )}
                   <Image src={preview} alt="Preview" fill className="object-cover" />
                 </div>
                 <div className="mt-2 flex items-center justify-between">
                   <span className="text-sm text-gray-600 truncate flex-1">{fileName}</span>
                   <div className="flex gap-2">
                     <label
-                      htmlFor={name}
-                      className="ml-2 text-blue-600 hover:text-blue-800 text-sm font-medium cursor-pointer"
+                      className={`text-blue-600 text-sm font-medium ${uploading ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}
                     >
-                      Change
+                      {uploading ? 'Uploading...' : 'Change'}
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={(e) => handleFileChange(e, input)}
+                        disabled={uploading}
+                      />
                     </label>
                     <button
                       type="button"
                       onClick={() => clearImage(input)}
-                      className="text-red-600 hover:text-red-800 text-sm font-medium"
+                      className="text-red-600 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                      disabled={uploading}
                     >
                       {existingImage ? 'Reset' : 'Remove'}
                     </button>
@@ -131,10 +140,6 @@ const ImageSelector = ({
           </div>
         )}
       </Field>
-
-      {form.getState().submitFailed && form.getState().errors?.[name || ''] && (
-        <small className="text-red-600">{form.getState().errors?.[name || '']}</small>
-      )}
     </div>
   )
 }
