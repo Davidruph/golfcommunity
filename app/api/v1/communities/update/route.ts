@@ -1,3 +1,4 @@
+export const runtime = 'nodejs'
 import pool from '@/lib/db'
 import { NextResponse, NextRequest } from 'next/server'
 import type { RowDataPacket } from 'mysql2'

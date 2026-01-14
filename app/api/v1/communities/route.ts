@@ -1,9 +1,9 @@
+export const runtime = 'nodejs'
 import pool from '@/lib/db'
 import { NextResponse, NextRequest } from 'next/server'
 import type { RowDataPacket } from 'mysql2'
 import { writeFile } from 'fs/promises'
 import { join } from 'path'
-import { unlink } from 'fs/promises'
 
 export async function GET(request: Request) {
   let connection
