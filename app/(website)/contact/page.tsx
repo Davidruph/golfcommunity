@@ -7,7 +7,7 @@ const Contact = () => {
   return (
     <section className="w-full flex justify-center bg-[#EEEBE5] py-20">
       <div className="z-10 w-full max-w-[1259px] flex flex-col items-center justify-center px-3">
-        <div className="w-full flex flex-col gap-6 items-start justify-center lg:flex-row lg:gap-20">
+        <div className="w-full flex flex-col gap-6 items-start justify-center lg:flex-row lg:gap-20 pb-20">
           <div className="w-full flex flex-col gap-5">
             <h1 className="contact-header">Get In Touch</h1>
             <p className="contact-desc">
@@ -52,7 +52,7 @@ const Contact = () => {
           </div>
         </div>
 
-        <div className="w-full flex flex-col md:flex-row justify-center items-center mt-30 gap-10">
+        <div className="w-full flex flex-col md:flex-row justify-center items-center mt-30 gap-10 pb-20">
           <div className="flex flex-col w-full gap-8 max-w-[404px] bg-white p-5 h-[183px] justify-between">
             <IoMail size={24} />
             <div className="flex flex-col gap-1">

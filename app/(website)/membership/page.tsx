@@ -1,6 +1,7 @@
 import Button from '@/components/website/Button'
 import Rating from '@/components/website/Rating'
 import Image from 'next/image'
+import Plans from './Plans'
 
 const Membership = () => {
   return (
@@ -50,18 +51,18 @@ const Membership = () => {
 
         <Rating />
 
-        <div className="flex flex-col items-center justify-center">
-          <div className="w-full max-w-[1260px] relative aspect-video my-22 mb-40">
-            <Image
-              src="/website/explore-bg.png"
-              alt="Footer Background"
-              fill
-              className="w-full h-full object-cover hidden md:block"
-              priority
-              loading="eager"
-            />
+        <div className="flex flex-col items-center justify-center pb-20">
+          <div
+            className="w-full max-w-[1260px] relative aspect-video mt-5 md:mt-20 mb-28 md:mb-0"
+            style={{
+              backgroundImage: "url('/website/explore-bg.png')",
+              backgroundRepeat: 'no-repeat',
+              backgroundSize: '100% auto',
+              backgroundPosition: 'center',
+            }}
+          >
             {/* Middle Content Div */}
-            <div className="absolute md:bottom-10 md:right-10 flex items-center justify-center px-3">
+            <div className="absolute md:bottom-10 md:right-10 flex items-center justify-center">
               <div className="bg-white w-full max-w-[580px] p-5 md:p-8 flex flex-col gap-5">
                 <h2 className="footer-question text-[30px] md:text-[48px]">Sponsor Youth Golf</h2>
 
@@ -126,6 +127,8 @@ const Membership = () => {
           </div>
         </div>
       </section>
+
+      <Plans />
     </>
   )
 }
