@@ -194,3 +194,127 @@
   letter-spacing: 0%;
   color: #079768;
 }
+.community-list-title {
+  font-family: Geist;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 23px;
+  letter-spacing: 0%;
+  color: #262626;
+}
+.community-list-desc {
+  font-family: Geist;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 0%;
+  color: #9f9fa8;
+}
+.community-list-count {
+  font-family: Geist;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 0%;
+  text-align: center;
+  color: #069768;
+}
+.community-news-title {
+  font-family: Geist;
+  font-weight: 500;
+  font-size: 20px;
+  line-height: 23px;
+  letter-spacing: 0%;
+  color: #262626;
+}
+.community-news-desc {
+  font-family: Geist;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 0%;
+  color: #000000#9F9FA8;
+}
+.comment-likes {
+  font-family: Geist;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 0%;
+  color: #9f9fa8;
+}
+.poster-name {
+  font-family: Geist;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 20px;
+  letter-spacing: 0%;
+  text-align: center;
+  color: #000000;
+}
+.post-date {
+  font-family: Geist;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 0%;
+  text-align: center;
+  color: #000000;
+}
+.add-event-btn {
+  font-family: Geist;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 0%;
+  color: #0c9486;
+}
+.event-name {
+  font-family: Geist;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 23px;
+  letter-spacing: 0%;
+  color: #5d6776;
+}
+.event-date {
+  font-family: Geist;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 0%;
+  color: #9f9fa8;
+}
+.event-fee {
+  font-family: Geist;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 23px;
+  letter-spacing: 0%;
+  color: #5d6776;
+}
+.event-spot {
+  font-family: Geist;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 0%;
+  color: #9f9fa8;
+}
+.event-time-day {
+  font-family: Geist;
+  font-weight: 700;
+  font-style: Bold;
+  font-size: 24px;
+  line-height: 20px;
+  letter-spacing: 0%;
+  color: #0d9486;
+}
+.event-time-month {
+  font-family: Geist;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 0%;
+  color: #0d9486;
+}
