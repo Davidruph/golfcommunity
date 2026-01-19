@@ -318,3 +318,39 @@
   letter-spacing: 0%;
   color: #0d9486;
 }
+.chat-list-name {
+  font-family: Geist;
+  font-weight: 500;
+  font-size: 18px;
+  line-height: 23px;
+  letter-spacing: 0%;
+  color: #262626;
+}
+.chat-list-message {
+  font-family: Geist;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 0%;
+  color: #9f9fa8;
+}
+.chat-msg {
+  gap: 8px;
+  opacity: 1;
+  border-width: 1px;
+  padding-top: 4px;
+  padding-right: 24px;
+  padding-bottom: 4px;
+  padding-left: 24px;
+  border-top-left-radius: 24px;
+  border-top-right-radius: 24px;
+  border-bottom-right-radius: 24px;
+}
+.chat-list-date {
+  font-family: Geist;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 0%;
+  color: #9f9fa8;
+}
