@@ -1,5 +1,7 @@
 import { Button } from '@/components/ui/button'
 import Loader from '@/components/website/loaders/Loader'
+import { Pencil } from 'lucide-react'
+
 type Props = {
   eventName?: string
   eventDate?: string
@@ -10,7 +12,10 @@ type Props = {
   action?: () => void
   userEventStatus?: string
   isLoading?: boolean
+  isCreatedByUser?: boolean
+  onEdit?: () => void
 }
+
 const EventCard = ({
   eventName,
   eventDate,
@@ -21,16 +26,12 @@ const EventCard = ({
   action,
   userEventStatus,
   isLoading,
+  isCreatedByUser,
+  onEdit,
 }: Props) => {
   const date = new Date(eventDate || '')
   const month = date.toLocaleString('default', { month: 'short' })
   const day = date.getDate()
-
-  // const handleRegisterClick = () => {
-  //   if (window.confirm('Are you sure you want to register for this event?')) {
-  //     action?.()
-  //   }
-  // }
 
   return (
     <div className="w-full border border-[#EAECF0] py-[8px] px-[12px] flex items-center justify-between">
@@ -52,7 +53,14 @@ const EventCard = ({
         <p className="event-spot">
           {attendanceSpot}/{totalSpot} spots
         </p>
-        {userEventStatus == '1' ? (
+        {isCreatedByUser ? (
+          <Button
+            className="bg-[#069769] text-white hover:bg-[#057a56] w-auto flex items-center gap-2"
+            onClick={onEdit}
+          >
+            <Pencil size={16} /> Edit
+          </Button>
+        ) : userEventStatus == '1' ? (
           <Button className="bg-[#EBF6F2] text-black border-0 w-[100px]" disabled>
             Registered
           </Button>
@@ -62,7 +70,7 @@ const EventCard = ({
             onClick={action}
             disabled={isLoading}
           >
-            {isLoading ? <Loader /> : 'Register'}
+            Register
           </Button>
         )}
       </div>

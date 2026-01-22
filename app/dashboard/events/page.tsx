@@ -41,6 +41,7 @@ import {
   useGetEventsQuery,
   useRegisterEventAttendanceMutation,
   useRegisterEventMutation,
+  useUpdateEventMutation,
 } from '@/service/event.service'
 import { getErrorMessage } from '@/utils/formatErrorResponse'
 import Loader from '@/components/website/loaders/Loader'
@@ -55,6 +56,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
+import { useSelector } from 'react-redux'
 
 const constraints = {
   eventName: {
@@ -101,6 +103,21 @@ interface Event {
   description?: string
   course_name?: string
   location?: string
+  created_by?: number
+  timezone?: string
+  banner_image?: string | null
+  community?: number | string
+  fee_link?: string | null
+}
+
+interface UserState {
+  user: {
+    id: number
+  } | null
+  token: string | null
+}
+interface RootState {
+  user: UserState
 }
 
 export default function Page() {
@@ -109,12 +126,15 @@ export default function Page() {
   const [page, setPage] = useState(1)
   const { data: communityData } = useCommunitiesQuery({})
   const [isSheetOpen, setIsSheetOpen] = useState(false)
+  const [isEditSheetOpen, setIsEditSheetOpen] = useState(false)
   const [event, setEvent] = useState<Event | null>(null)
+  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null)
   const [formApi, setFormApi] = useState<FormApi<onSubmitProps> | null>(null)
   const timezoneOptions = Intl.supportedValuesOf('timeZone').map((tz) => ({
     label: tz,
     value: tz,
   }))
+  const { user } = useSelector((state: RootState) => state.user)
 
   const { data: eventsData, isLoading } = useGetEventsQuery({
     page,
@@ -149,15 +169,47 @@ export default function Page() {
     await rtkMutation(createEvent, values)
   }
 
+  const [updateEvent, { isSuccess: updateSuccess, error: updateError }] = useUpdateEventMutation()
+  const onUpdateSubmit = async (values: onSubmitProps) => {
+    console.log('Form Values:', values)
+    // if (!values.bannerImage) {
+    //   showAlert('Please upload event graphics', 'error')
+    //   return
+    // }
+    if (values.fees && !values.feeLink) {
+      showAlert('Please enter fee link', 'error')
+      return
+    } else if (!values.fees && values.feeLink) {
+      showAlert('Please enter fees', 'error')
+      return
+    }
+
+    const payload = {
+      id: selectedEvent?.id,
+      ...values,
+    }
+    await rtkMutation(updateEvent, payload)
+  }
+
   useEffect(() => {
     if (isSuccess) {
-      showAlert('Community registration successful!', 'success')
+      showAlert('Event creation successful!', 'success')
       formApi?.reset()
       setIsSheetOpen(false)
     } else if (error) {
       showAlert(getErrorMessage(error), 'error')
     }
   }, [isSuccess, error, formApi])
+
+  useEffect(() => {
+    if (updateSuccess) {
+      showAlert('Event update successful!', 'success')
+      setIsEditSheetOpen(false)
+      setSelectedEvent(null)
+    } else if (updateError) {
+      showAlert(getErrorMessage(updateError), 'error')
+    }
+  }, [updateSuccess, updateError])
 
   const [attendEvent, { isSuccess: attendSuccess, error: attendError, isLoading: attendLoading }] =
     useRegisterEventAttendanceMutation()
@@ -225,7 +277,7 @@ export default function Page() {
               <div className="relative">
                 <Search size={20} className="absolute top-2 left-2" />
                 <input
-                  type="text"
+                  type="search"
                   className="event-input border border-[#DFE4EC] p-[4px] rounded-[8px] h-[36px] w-[212px] bg-white pl-8 text-sm placeholder:text-[#9AA2B1] focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                   placeholder="Search"
                   value={filtersVal.search || ''}
@@ -256,9 +308,14 @@ export default function Page() {
                     totalSpot={event.total_allowed_spots}
                     attendanceSpot={event.registered_spots || 0}
                     userEventStatus={event.user_event_status}
+                    isCreatedByUser={event.created_by === user?.id}
                     // isLoading={attendLoading}
                     action={() => {
                       handleAttendEvent(event)
+                    }}
+                    onEdit={() => {
+                      setSelectedEvent(event)
+                      setIsEditSheetOpen(true)
                     }}
                   />
                 ))
@@ -387,8 +444,146 @@ export default function Page() {
         </SheetContent>
       </Sheet>
 
+      <Sheet open={isEditSheetOpen} onOpenChange={setIsEditSheetOpen}>
+        <SheetContent className="overflow-auto">
+          <SheetHeader>
+            <SheetTitle>Edit Event</SheetTitle>
+            <SheetDescription></SheetDescription>
+            <Form
+              onSubmit={onUpdateSubmit}
+              validate={validateForm}
+              initialValues={
+                selectedEvent
+                  ? {
+                      eventName: selectedEvent.event_name,
+                      description: selectedEvent.description,
+                      timezone: selectedEvent.timezone,
+                      community: selectedEvent.community
+                        ? selectedEvent.community.toString()
+                        : undefined,
+                      bannerImage: selectedEvent.banner_image,
+                      eventDate: selectedEvent.event_date,
+                      eventTime: selectedEvent.event_time,
+                      totalAllowedSpots: selectedEvent.total_allowed_spots.toString(),
+                      fees: selectedEvent.fees ? selectedEvent.fees.toString() : '',
+                      courseName: selectedEvent.course_name,
+                      location: selectedEvent.location,
+                      feeLink: selectedEvent.fee_link,
+                    }
+                  : {}
+              }
+              render={({ handleSubmit, form, submitting }) => {
+                return (
+                  <form onSubmit={handleSubmit}>
+                    <Input
+                      label="Event Name"
+                      name="eventName"
+                      type="text"
+                      placeholder="Enter event Name"
+                      form={form}
+                    />
+                    <Select
+                      label="Community"
+                      name="community"
+                      placeholder="Select Community"
+                      form={form}
+                      options={
+                        communityData?.map((community: { id: number; name: string }) => ({
+                          label: community.name,
+                          value: community.id,
+                        })) || []
+                      }
+                    />
+
+                    <Select
+                      label="Select Timezone"
+                      name="timezone"
+                      placeholder="Select Timezone"
+                      form={form}
+                      options={timezoneOptions}
+                    />
+
+                    <div className="flex gap-3 items-center">
+                      <Input
+                        label="Event Date"
+                        name="eventDate"
+                        type="date"
+                        placeholder="Enter event Date"
+                        form={form}
+                      />
+                      <Input
+                        label="Event Time"
+                        name="eventTime"
+                        type="time"
+                        placeholder="Enter event Time"
+                        form={form}
+                      />
+                    </div>
+                    <Input
+                      label="Total Allowed Spots"
+                      name="totalAllowedSpots"
+                      type="number"
+                      placeholder="Enter total allowed spots"
+                      form={form}
+                    />
+                    <Input
+                      label="Fees (if any)"
+                      name="fees"
+                      type="text"
+                      placeholder="Enter Fees"
+                      form={form}
+                    />
+
+                    <Input
+                      label="Fee Link (if fees applicable)"
+                      name="feeLink"
+                      type="text"
+                      placeholder="Enter Fee Link"
+                      form={form}
+                    />
+
+                    <Input
+                      label="Course Name"
+                      name="courseName"
+                      type="text"
+                      placeholder="Enter Course Name"
+                      form={form}
+                    />
+
+                    <ImageSelector name="bannerImage" label="Upload Event Graphics" form={form} />
+
+                    <Textarea
+                      label="Description"
+                      name="description"
+                      placeholder="Enter Description"
+                      form={form}
+                    />
+
+                    <Input
+                      label="Location"
+                      name="location"
+                      type="text"
+                      placeholder="Enter Location"
+                      form={form}
+                    />
+
+                    <button
+                      type="submit"
+                      className="auth-submit w-full max-w-[490px] h-[49px] py-1 px-2 mt-4 cursor-pointer"
+                      disabled={submitting}
+                    >
+                      {submitting ? <Loader /> : 'Update Event'}
+                    </button>
+                  </form>
+                )
+              }}
+            />
+          </SheetHeader>
+        </SheetContent>
+      </Sheet>
+
       <Dialog open={!!event} onOpenChange={() => setEvent(null)}>
-        <DialogContent className="lg:max-w-[713px] sm:max-w-sm w-full px-2 p-0">
+        <DialogContent className="lg:max-w-[713px] sm:max-w-sm w-full px-2 p-0 max-h-[588px]">
           <DialogHeader className="hidden">
             <DialogTitle>{event?.event_name}</DialogTitle>
           </DialogHeader>

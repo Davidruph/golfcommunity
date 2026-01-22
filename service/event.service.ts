@@ -19,7 +19,7 @@ const eventApiSlice = apiSlice.injectEndpoints({
           method: 'GET',
         }
       },
-      providesTags: ['events'],
+      providesTags: ['golf_event'],
     }),
     registerEvent: builder.mutation({
       query: (eventData) => ({
@@ -27,7 +27,7 @@ const eventApiSlice = apiSlice.injectEndpoints({
         method: 'POST',
         body: eventData,
       }),
-      invalidatesTags: ['events'],
+      invalidatesTags: ['golf_event'],
     }),
     registerEventAttendance: builder.mutation({
       query: (eventData) => ({
@@ -35,10 +35,22 @@ const eventApiSlice = apiSlice.injectEndpoints({
         method: 'POST',
         body: eventData,
       }),
-      invalidatesTags: ['events'],
+      invalidatesTags: ['golf_event'],
+    }),
+    updateEvent: builder.mutation({
+      query: (eventData) => ({
+        url: EVENTS,
+        method: 'PATCH',
+        body: eventData,
+      }),
+      invalidatesTags: ['golf_event'],
     }),
   }),
 })
 
-export const { useGetEventsQuery, useRegisterEventMutation, useRegisterEventAttendanceMutation } =
-  eventApiSlice
+export const {
+  useGetEventsQuery,
+  useRegisterEventMutation,
+  useRegisterEventAttendanceMutation,
+  useUpdateEventMutation,
+} = eventApiSlice
