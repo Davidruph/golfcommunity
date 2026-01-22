@@ -56,8 +56,6 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import ImageSelector from '@/components/auth/ImageSelector'
-import enviroment from '@/configuration/siteConfig'
-import axios from 'axios'
 import Image from 'next/image'
 
 const constraints = {
@@ -113,18 +111,12 @@ export default function Page() {
   const { data: usersData } = useUsersQuery({})
   const { user } = useSelector((state: RootState) => state.user)
   const [formApi, setFormApi] = useState<FormApi<onSubmitProps> | null>(null)
-  const [formSubmitting, setFormSubmitting] = useState(false)
-  const { token } = useSelector((state: { user: { token: string | null } }) => state.user)
 
   const addCommunity = () => {
     setIsSheetOpen(true)
   }
 
-  const {
-    data: communitiesData,
-    isLoading,
-    refetch,
-  } = useGetCommunitiesQuery({
+  const { data: communitiesData, isLoading } = useGetCommunitiesQuery({
     page,
     limit: 10,
     search: filtersVal.search || '',

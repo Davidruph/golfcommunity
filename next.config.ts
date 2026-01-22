@@ -2,6 +2,16 @@ import type { NextConfig } from 'next'
 import bundleAnalyzer from '@next/bundle-analyzer'
 
 const nextConfig: NextConfig = {
+  reactStrictMode: true,
+  poweredByHeader: false,
+  compress: true,
+
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+  compiler: {
+    removeConsole: process.env.NODE_ENV === 'production',
+  },
   images: {
     remotePatterns: [
       {

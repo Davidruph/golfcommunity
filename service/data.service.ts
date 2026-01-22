@@ -1,5 +1,5 @@
 import apiSlice from './apiSlice'
-import { COUNTRIES, STATES, CITIES, USER_LIST } from './constants'
+import { COUNTRIES, STATES, CITIES, USER_LIST, COMMUNITY_LIST } from './constants'
 
 const dataApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
@@ -27,7 +27,19 @@ const dataApiSlice = apiSlice.injectEndpoints({
         method: 'GET',
       }),
     }),
+    communities: builder.query({
+      query: () => ({
+        url: COMMUNITY_LIST,
+        method: 'GET',
+      }),
+    }),
   }),
 })
 
-export const { useCountriesQuery, useStatesQuery, useCitiesQuery, useUsersQuery } = dataApiSlice
+export const {
+  useCountriesQuery,
+  useStatesQuery,
+  useCitiesQuery,
+  useUsersQuery,
+  useCommunitiesQuery,
+} = dataApiSlice

@@ -12,6 +12,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { updateUser } from '@/redux/slices/user.slice'
 import rtkMutation from '@/utils/rtkMutation'
 import Loader from '@/components/website/loaders/Loader'
+import Image from 'next/image'
 // import ReCAPTCHA from 'react-google-recaptcha'
 
 const constraints = {
@@ -127,6 +128,17 @@ const Page = () => {
         {/* Right */}
         <div className="w-full flex flex-col items-center justify-center">
           <div className="w-full max-w-[490px]">
+            <Link href="/" className="w-full flex justify-center mb-10 mt-4">
+              <Image
+                src="/logo.png"
+                alt="Logo"
+                width={134}
+                height={50}
+                loading="eager"
+                className="w-[134px] h-[90px] cursor-pointer"
+              />
+            </Link>
+
             <h2 className="auth-header mb-8">Login</h2>
             <Form
               onSubmit={onSubmit}

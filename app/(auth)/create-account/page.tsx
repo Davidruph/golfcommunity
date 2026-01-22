@@ -14,6 +14,7 @@ import { getErrorMessage } from '@/utils/formatErrorResponse'
 import { OnChange } from 'react-final-form-listeners'
 import Loader from '@/components/website/loaders/Loader'
 import { useSelector } from 'react-redux'
+import Image from 'next/image'
 
 const constraints = {
   accountType: {
@@ -124,6 +125,16 @@ const Page = () => {
         {/* Right */}
         <div className="w-full flex flex-col items-center justify-center">
           <div className="w-full max-w-[490px]">
+            <Link href="/" className="w-full flex justify-center mb-10 mt-4">
+              <Image
+                src="/logo.png"
+                alt="Logo"
+                width={134}
+                height={50}
+                loading="eager"
+                className="w-[134px] h-[90px] cursor-pointer"
+              />
+            </Link>
             <h2 className="auth-header mb-8">Create Account</h2>
             <Form
               onSubmit={onSubmit}
@@ -152,34 +163,38 @@ const Page = () => {
                       { label: 'Church Owner', value: 'Church Owner' },
                     ]}
                   />
-                  <Input
-                    label="First Name"
-                    name="firstName"
-                    type="text"
-                    placeholder="Enter First Name"
-                    form={form}
-                  />
-                  <Input
-                    label="Last Name"
-                    name="lastName"
-                    type="text"
-                    placeholder="Enter Last Name"
-                    form={form}
-                  />
-                  <Input
-                    label="Email"
-                    name="email"
-                    type="email"
-                    placeholder="Enter Email"
-                    form={form}
-                  />
-                  <Input
-                    label="Password"
-                    name="password"
-                    type="password"
-                    placeholder="Enter Password"
-                    form={form}
-                  />
+                  <div className="flex items-center gap-0 md:gap-2 flex-col md:flex-row w-full">
+                    <Input
+                      label="First Name"
+                      name="firstName"
+                      type="text"
+                      placeholder="Enter First Name"
+                      form={form}
+                    />
+                    <Input
+                      label="Last Name"
+                      name="lastName"
+                      type="text"
+                      placeholder="Enter Last Name"
+                      form={form}
+                    />
+                  </div>
+                  <div className="flex items-center gap-0 md:gap-2 flex-col md:flex-row w-full">
+                    <Input
+                      label="Email"
+                      name="email"
+                      type="email"
+                      placeholder="Enter Email"
+                      form={form}
+                    />
+                    <Input
+                      label="Password"
+                      name="password"
+                      type="password"
+                      placeholder="Enter Password"
+                      form={form}
+                    />
+                  </div>
                   <Input
                     label="Phone Number"
                     name="phoneNumber"
@@ -187,61 +202,67 @@ const Page = () => {
                     placeholder="Enter Phone Number"
                     form={form}
                   />
-                  <Select
-                    name="country"
-                    label="Country"
-                    placeholder="Select a country"
-                    form={form}
-                    options={
-                      countries?.map((country: { id: number; name: string }) => ({
-                        value: country.id,
-                        label: country.name,
-                      })) || []
-                    }
-                  />
+                  <div className="flex items-center gap-0 md:gap-2 flex-col md:flex-row w-full">
+                    <Select
+                      name="country"
+                      label="Country"
+                      placeholder="Select a country"
+                      form={form}
+                      options={
+                        countries?.map((country: { id: number; name: string }) => ({
+                          value: country.id,
+                          label: country.name,
+                        })) || []
+                      }
+                    />
+
+                    <Select
+                      name="state"
+                      label="State"
+                      placeholder="Select a state"
+                      form={form}
+                      options={
+                        states?.map((state: { id: number; name: string }) => ({
+                          value: state.id,
+                          label: state.name,
+                        })) || []
+                      }
+                    />
+                  </div>
                   <OnChange name="country">
                     {(value: number) => {
                       setCountryID(value)
                       form.change('state', '')
                     }}
                   </OnChange>
-                  <Select
-                    name="state"
-                    label="State"
-                    placeholder="Select a state"
-                    form={form}
-                    options={
-                      states?.map((state: { id: number; name: string }) => ({
-                        value: state.id,
-                        label: state.name,
-                      })) || []
-                    }
-                  />
                   <OnChange name="state">
                     {(value: number) => {
                       setStateID(value)
                       form.change('city', '')
                     }}
                   </OnChange>
-                  <Select
-                    name="city"
-                    label="City"
-                    placeholder="Select a city"
-                    form={form}
-                    options={
-                      cities?.map((city: { id: number; name: string }) => ({
-                        value: city.id,
-                        label: city.name,
-                      })) || []
-                    }
-                  />
-                  <Input
-                    label="Zip Code"
-                    name="zipCode"
-                    type="text"
-                    placeholder="Enter Zip Code"
-                    form={form}
-                  />
+
+                  <div className="flex items-center gap-0 md:gap-2 flex-col md:flex-row w-full">
+                    <Select
+                      name="city"
+                      label="City"
+                      placeholder="Select a city"
+                      form={form}
+                      options={
+                        cities?.map((city: { id: number; name: string }) => ({
+                          value: city.id,
+                          label: city.name,
+                        })) || []
+                      }
+                    />
+                    <Input
+                      label="Zip Code"
+                      name="zipCode"
+                      type="text"
+                      placeholder="Enter Zip Code"
+                      form={form}
+                    />
+                  </div>
 
                   <button
                     type="submit"
@@ -253,7 +274,7 @@ const Page = () => {
                 </form>
               )}
             />
-            <p className="auth-question mt-8">
+            <p className="auth-question mt-8 mb-4">
               Have an Account? <Link href="/login">Login</Link>{' '}
             </p>
           </div>

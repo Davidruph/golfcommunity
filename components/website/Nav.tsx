@@ -20,12 +20,12 @@ const Nav = () => {
         <div className="flex gap-[60px] items-center">
           <Link href="/">
             <Image
-              src="/placeholder-logo.svg"
+              src="/logo.png"
               alt="Logo"
               width={134}
-              height={36}
+              height={50}
               loading="eager"
-              className="w-[134px] h-9 cursor-pointer"
+              className="w-[134px] h-[80px] cursor-pointer"
             />
           </Link>
           {/* Desktop Menu */}
