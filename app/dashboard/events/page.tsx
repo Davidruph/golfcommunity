@@ -36,7 +36,7 @@ import Textarea from '@/components/auth/Textarea'
 import Select from '@/components/auth/Select'
 import rtkMutation from '@/utils/rtkMutation'
 import ImageSelector from '@/components/auth/ImageSelector'
-import { useCommunitiesQuery } from '@/service/data.service'
+import { useCommunitiesQuery, useGetCourseQuery } from '@/service/data.service'
 import {
   useGetEventsQuery,
   useRegisterEventAttendanceMutation,
@@ -46,17 +46,9 @@ import {
 import { getErrorMessage } from '@/utils/formatErrorResponse'
 import Loader from '@/components/website/loaders/Loader'
 import Spinner from '@/components/website/loaders/Spinner'
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { useSelector } from 'react-redux'
+import DatalistInput from '@/components/auth/DatalistInput'
 
 const constraints = {
   eventName: {
@@ -143,6 +135,8 @@ export default function Page() {
     status: filtersVal.status || '',
     filter: filtersVal.filter || '',
   })
+
+  const { data: courseData } = useGetCourseQuery({})
 
   const addEvent = () => {
     setIsSheetOpen(true)
@@ -404,12 +398,25 @@ export default function Page() {
                       form={form}
                     />
 
-                    <Input
+                    {/* <Input
                       label="Course Name"
                       name="courseName"
                       type="text"
                       placeholder="Enter Course Name"
                       form={form}
+                    /> */}
+
+                    <DatalistInput
+                      label="Course Name"
+                      name="courseName"
+                      placeholder="Type or select course name"
+                      form={form}
+                      options={
+                        courseData?.map((course: { course_name: string }) => ({
+                          label: course.course_name,
+                          value: course.course_name,
+                        })) || []
+                      }
                     />
 
                     <ImageSelector name="bannerImage" label="Upload Event Graphics" form={form} />
@@ -542,12 +549,25 @@ export default function Page() {
                       form={form}
                     />
 
-                    <Input
+                    {/* <Input
                       label="Course Name"
                       name="courseName"
                       type="text"
                       placeholder="Enter Course Name"
                       form={form}
+                    /> */}
+
+                    <DatalistInput
+                      label="Course Name"
+                      name="courseName"
+                      placeholder="Type or select course name"
+                      form={form}
+                      options={
+                        courseData?.map((course: { course_name: string }) => ({
+                          label: course.course_name,
+                          value: course.course_name,
+                        })) || []
+                      }
                     />
 
                     <ImageSelector name="bannerImage" label="Upload Event Graphics" form={form} />
