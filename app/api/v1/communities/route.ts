@@ -2,10 +2,22 @@ export const runtime = 'nodejs'
 import pool from '@/lib/db'
 import { NextResponse, NextRequest } from 'next/server'
 import type { RowDataPacket } from 'mysql2'
+import jwt from 'jsonwebtoken'
 
 export async function GET(request: Request) {
   let connection
   try {
+    // Get current user from token
+    const token =
+      request.headers.get('authorization')?.replace('Bearer ', '') ||
+      request.headers.get('cookie')?.split('auth-token=')[1]?.split(';')[0]
+
+    let currentUserId = null
+    if (token) {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET!) as { userId: number }
+      currentUserId = decoded.userId
+    }
+
     // Get query parameters
     const { searchParams } = new URL(request.url)
     const search = searchParams.get('search') || ''
@@ -71,13 +83,18 @@ export async function GET(request: Request) {
         community_members.activity,
         community_members.user_id as member_user_id,
         COUNT(DISTINCT community_members.user_id) as members_count,
-        captain_user.email as captain_email
+        captain_user.email as captain_email,
+         EXISTS (
+      SELECT 1 FROM community_members 
+      WHERE community_members.community_id = communities.id 
+        AND community_members.user_id = ?
+    ) AS is_member
        ${baseQuery}
        ${whereClause}
        GROUP BY communities.id, captain_user.email
        ORDER BY communities.created_at DESC
        LIMIT ? OFFSET ?`,
-      [...queryParams, limit, offset]
+      [...queryParams, currentUserId, limit, offset]
     )
 
     console.log('Fetched communities:', rows)
