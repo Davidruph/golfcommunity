@@ -36,14 +36,14 @@ export async function GET(request: Request) {
 
     if (search) {
       conditions.push(
-        '(instructors.teaching_specialty LIKE ? OR instructors.price_per_hour LIKE ? OR instructors.experience_level LIKE ? OR instructors.teaching_philosophy LIKE ?)'
+        '(news_topics.topic_title LIKE ? OR news_topics.category LIKE ? OR news_topics.discussion_details LIKE ?)'
       )
       const searchPattern = `%${search}%`
-      params.push(searchPattern, searchPattern, searchPattern, searchPattern)
+      params.push(searchPattern, searchPattern, searchPattern)
     }
 
     if (status) {
-      conditions.push('instructors.status = ?')
+      conditions.push('news_topics.status = ?')
       params.push(parseInt(status))
     }
 
@@ -51,8 +51,8 @@ export async function GET(request: Request) {
 
     // Get total count - count distinct events only
     const countQuery = `
-      SELECT COUNT(DISTINCT instructors.id) as total 
-      FROM instructors 
+      SELECT COUNT(DISTINCT news_topics.id) as total 
+      FROM news_topics 
       ${whereClause}
     `
     const [countResult] = (await connection.query(countQuery, params)) as [
@@ -64,14 +64,19 @@ export async function GET(request: Request) {
     // Get paginated data
     const dataQuery = `
       SELECT 
-        instructors.*, 
-        ${currentUserId ? `MAX(CASE WHEN instructors.user_id = ${currentUserId} THEN 1 ELSE 0 END)` : '0'} AS user_is_creator,
-        CONCAT(users.first_name, ' ', users.last_name) AS instructor_name
-      FROM instructors 
-      LEFT JOIN users ON instructors.user_id = users.id
+        news_topics.*, 
+        ${currentUserId ? `MAX(CASE WHEN news_topics.user_id = ${currentUserId} THEN 1 ELSE 0 END)` : '0'} AS user_is_creator,
+        CONCAT(users.first_name, ' ', users.last_name) AS poster_name,
+        COUNT(DISTINCT news_comments.id) AS comments_count,
+        COUNT(DISTINCT news_likes.id) AS likes_count,
+        MAX(CASE WHEN news_likes.user_id = ${currentUserId || 0} THEN 1 ELSE 0 END) AS user_has_liked
+      FROM news_topics 
+      LEFT JOIN users ON news_topics.user_id = users.id
+      LEFT JOIN news_comments ON news_topics.id = news_comments.news_topic_id
+      LEFT JOIN news_likes ON news_topics.id = news_likes.news_topic_id
       ${whereClause}
-      GROUP BY instructors.id
-      ORDER BY instructors.created_on DESC
+      GROUP BY news_topics.id
+      ORDER BY news_topics.created_at DESC
       LIMIT ? OFFSET ?
     `
     const [rows] = (await connection.query(dataQuery, [...params, limit, offset])) as [
@@ -132,53 +137,29 @@ export async function POST(req: NextRequest) {
     const formData = await req.json()
 
     // Extract fields
-    const teaching_specialty = formData.teachingSpecialty as string
-    const price_per_hour = formData.pricePerHour as number
-    const experience_level = formData.experienceLevel as string
-    const teaching_philosophy = formData.teachingPhilosophy as string
-    const avatar = formData.avatar as string
-    const created_by = decoded.userId
+    const topic_title = formData.topicTitle as string
+    const category = formData.category as number
+    const discussion_details = formData.discussionDetails as string
+    const topic_image = formData.topicImage as string
+    const user_id = decoded.userId
 
     // Validate required fields
-    if (
-      !teaching_specialty ||
-      !price_per_hour ||
-      !experience_level ||
-      !teaching_philosophy ||
-      !avatar
-    ) {
+    if (!topic_title || !category || !discussion_details) {
       connection.release()
       return NextResponse.json({ error: 'All fields are required' }, { status: 400 })
     }
 
-    //check for duplicate campaign title
-    if (teaching_specialty) {
-      const [existing_specialty] = (await connection.query(
-        'SELECT id FROM instructors WHERE teaching_specialty = ? AND id = ?',
-        [teaching_specialty, created_by]
-      )) as [Array<RowDataPacket>, unknown]
-
-      if (existing_specialty && existing_specialty.length > 0) {
-        connection.release()
-        return NextResponse.json(
-          { error: 'Instructor with this specialty already exists' },
-          { status: 409 }
-        )
-      }
-    }
-
     // Insert into database
-    const eventData = {
-      teaching_specialty,
-      price_per_hour,
-      experience_level,
-      teaching_philosophy,
-      avatar,
-      status: 0,
-      user_id: created_by,
+    const topicData = {
+      topic_title,
+      category,
+      discussion_details,
+      topic_image,
+      status: 1,
+      user_id,
     }
 
-    const [result] = (await connection.query('INSERT INTO instructors SET ?', eventData)) as [
+    const [result] = (await connection.query('INSERT INTO news_topics SET ?', topicData)) as [
       { insertId: number; affectedRows: number },
       unknown,
     ]
@@ -187,19 +168,19 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(
       {
-        message: 'Instructor created successfully',
-        instructorId: result.insertId,
+        message: 'News topic created successfully',
+        topicId: result.insertId,
       },
       { status: 201 }
     )
   } catch (err: unknown) {
     connection.release()
-    console.error('Instructor creation error:', err)
+    console.error('News topic creation error:', err)
 
     return NextResponse.json(
       {
         error: 'Database error',
-        message: (err as Error)?.message || 'An error occurred during instructor creation',
+        message: (err as Error)?.message || 'An error occurred during news topic creation',
       },
       { status: 500 }
     )

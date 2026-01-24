@@ -1,9 +1,9 @@
 import apiSlice from './apiSlice'
-import { INSTRUCTORS } from './constants'
+import { NEWS_TOPICS } from './constants'
 
-const instructorApiSlice = apiSlice.injectEndpoints({
+const newsApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
-    getInstructors: builder.query({
+    getNewsTopics: builder.query({
       query: (params = {}) => {
         const searchParams = new URLSearchParams()
         if (params.page) searchParams.append('page', params.page.toString())
@@ -15,21 +15,21 @@ const instructorApiSlice = apiSlice.injectEndpoints({
         const queryString = searchParams.toString()
 
         return {
-          url: queryString ? `${INSTRUCTORS}?${queryString}` : INSTRUCTORS,
+          url: queryString ? `${NEWS_TOPICS}?${queryString}` : NEWS_TOPICS,
           method: 'GET',
         }
       },
-      providesTags: ['instructors'],
+      providesTags: ['news'],
     }),
-    registerInstructor: builder.mutation({
-      query: (instructorData) => ({
-        url: INSTRUCTORS,
+    registerNewsTopic: builder.mutation({
+      query: (newsTopicData) => ({
+        url: NEWS_TOPICS,
         method: 'POST',
-        body: instructorData,
+        body: newsTopicData,
       }),
-      invalidatesTags: ['instructors'],
+      invalidatesTags: ['news'],
     }),
   }),
 })
 
-export const { useGetInstructorsQuery, useRegisterInstructorMutation } = instructorApiSlice
+export const { useGetNewsTopicsQuery, useRegisterNewsTopicMutation } = newsApiSlice

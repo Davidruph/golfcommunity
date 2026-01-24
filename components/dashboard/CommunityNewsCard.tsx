@@ -2,7 +2,7 @@ import Image from 'next/image'
 import defaultImage from '@/public/admin/default-community-image.png'
 import { Button } from '../ui/button'
 import { MessageSquare, ThumbsUp } from 'lucide-react'
-import { RxAvatar } from 'react-icons/rx'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 
 type CommunityNewsCardProps = {
   action?: () => void
@@ -12,6 +12,7 @@ type CommunityNewsCardProps = {
   postDate: string
   likesCount: number
   commentsCount: number
+  topicImage?: string
 }
 const CommunityNewsCard = ({
   action,
@@ -21,20 +22,38 @@ const CommunityNewsCard = ({
   postDate,
   likesCount,
   commentsCount,
+  topicImage,
 }: CommunityNewsCardProps) => {
   return (
     <div className="border border-[#EAECF0] w-full max-w-[616px] p-[16px] flex gap-3">
-      <Image src={defaultImage} alt="Community News image" width={159} height={203} className="" />
+      <Image
+        src={topicImage || defaultImage}
+        alt="Community News image"
+        width={159}
+        height={203}
+        className=""
+      />
       <div className="flex flex-col gap-2">
         <div className="flex gap-2 items-center mb-2">
-          <RxAvatar size={35} />
+          <Avatar>
+            <AvatarFallback>
+              {posterName
+                .split(' ')
+                .map((n) => n[0])
+                .join('')
+                .toUpperCase()}
+            </AvatarFallback>
+          </Avatar>
           <div className="flex flex-col items-start">
             <p className="poster-name">{posterName}</p>
             <p className="post-date">{postDate}</p>
           </div>
         </div>
-        <p className="community-news-title">{title}</p>
-        <p className="community-news-desc">{content}</p>
+        <p className="community-news-title mb-2">{title}</p>
+        <p className="community-news-desc">
+          {content.length > 50 ? `${content.slice(0, 50)}...` : content}
+        </p>
+
         <Button className="text-sm w-[100px] mt-2" size={'sm'} onClick={action}>
           Read More
         </Button>
