@@ -446,8 +446,77 @@
   font-family: Geist;
   font-weight: 500;
   font-size: 10px;
-  leading-trim: NONE;
   line-height: 100%;
   letter-spacing: 0%;
   color: #ffffff;
+}
+
+.instructor-msg {
+  font-family: Geist;
+  font-weight: 500;
+  font-style: Medium;
+  font-size: 12px;
+  line-height: 100%;
+  letter-spacing: 0%;
+  color: #ff8400;
+}
+.instructor-fee {
+  font-family: Geist;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 0%;
+  text-align: center;
+  color: #079769;
+}
+.instructor-name {
+  font-family: Geist;
+  font-weight: 500;
+  font-size: 20px;
+  line-height: 20px;
+  letter-spacing: 0%;
+  text-align: center;
+  color: #000000;
+}
+.instructor-specialty {
+  font-family: Geist;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 0%;
+  color: #000000;
+}
+.instructor-book-name {
+  font-family: Geist;
+  font-weight: 500;
+  font-size: 36px;
+  line-height: 80%;
+  letter-spacing: 0%;
+  color: #ffffff;
+}
+.instructor-book-specialty {
+  font-family: Geist;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 0%;
+  color: #ffffff;
+}
+.instructor-approach {
+  font-family: Geist;
+  font-weight: 500;
+  font-style: Medium;
+  font-size: 14px;
+  line-height: 100%;
+  letter-spacing: 0%;
+  color: #000000b2;
+}
+.instructor-book-philosophy {
+  font-family: Geist;
+  font-weight: 500;
+  font-style: Medium;
+  font-size: 16px;
+  line-height: 100%;
+  letter-spacing: 0%;
+  color: #000000;
 }
