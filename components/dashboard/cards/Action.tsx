@@ -6,8 +6,9 @@ type Props = {
   title: string
   icon: string
   link: string
+  action?: () => void
 }
-const Action = ({ title, icon, link }: Props) => {
+const Action = ({ title, icon, link, action }: Props) => {
   return (
     <div className="w-full h-[84px] flex justify-between items-center bg-black p-4">
       <div className="flex items-center gap-3">
@@ -16,6 +17,7 @@ const Action = ({ title, icon, link }: Props) => {
       </div>
       <Link
         href={link}
+        onClick={action}
         className="border border-black bg-white text-black h-[28px] w-[28px] flex items-center justify-center"
       >
         <FaChevronRight />

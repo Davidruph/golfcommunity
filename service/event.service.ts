@@ -1,5 +1,5 @@
 import apiSlice from './apiSlice'
-import { EVENTS, REGISTER_EVENT } from './constants'
+import { EVENTS, REGISTER_EVENT, EVENT_LIST } from './constants'
 
 const eventApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
@@ -45,6 +45,13 @@ const eventApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ['golf_event'],
     }),
+    getEventList: builder.query({
+      query: () => ({
+        url: EVENT_LIST,
+        method: 'GET',
+      }),
+      providesTags: ['golf_event'],
+    }),
   }),
 })
 
@@ -53,4 +60,5 @@ export const {
   useRegisterEventMutation,
   useRegisterEventAttendanceMutation,
   useUpdateEventMutation,
+  useGetEventListQuery,
 } = eventApiSlice

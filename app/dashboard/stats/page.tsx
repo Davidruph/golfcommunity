@@ -12,6 +12,13 @@ import cupicon from '@/public/dashboard/cup.svg'
 import hash from '@/public/dashboard/hash.svg'
 import stats from '@/public/dashboard/stats.svg'
 import rounds from '@/public/dashboard/rounds.svg'
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+} from '@/components/ui/sheet'
 
 const pagestats = [
   { title: 'Handicap Score', value: '12.4', stat: '0.2', bgIcon: hash },
@@ -21,23 +28,98 @@ const pagestats = [
 ]
 
 import dynamic from 'next/dynamic'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import DynamicTable, { TableColumn } from '@/components/table/DynamicTable'
+import { useGetScoreLogsQuery, useLogScoreMutation } from '@/service/scorelog.service'
+import rtkMutation from '@/utils/rtkMutation'
+import { validate } from 'validate.js'
+import { Form } from 'react-final-form'
+import Select from '@/components/auth/Select'
+import DatalistInput from '@/components/auth/DatalistInput'
+import Input from '@/components/auth/Input'
+import ImageSelector from '@/components/auth/ImageSelector'
+import Loader from '@/components/website/loaders/Loader'
+import { useGetEventListQuery } from '@/service/event.service'
+import { useGetCourseQuery } from '@/service/data.service'
+import { Button } from '@/components/ui/button'
+import { Plus } from 'lucide-react'
+import { showAlert } from '@/utils/showAlert'
+import { getErrorMessage } from '@/utils/formatErrorResponse'
 
 const Chart = dynamic(() => import('react-apexcharts'), {
   ssr: false,
 })
 
 interface ActivityFeed {
-  id: string
-  date: string
-  course: string
-  score: number
-  diff: string
-  matchType: string
+  id: number
+  created_at: string
+  course_name: string
+  gross_score: number
+  diff?: string
+  match_type: string
+}
+
+const constraints = {
+  eventName: {
+    presence: true,
+  },
+  matchType: {
+    presence: true,
+  },
+  grossScore: {
+    presence: true,
+  },
+  fairwayHits: {
+    presence: true,
+  },
+  greensInReg: {
+    presence: true,
+  },
+  puttPerRound: {
+    presence: true,
+  },
+  courseName: {
+    presence: true,
+  },
+  scoreCard: {
+    presence: true,
+  },
+}
+
+type onSubmitProps = {
+  [key: string]: undefined | string
 }
 
 export default function Page() {
+  const { data: courseData } = useGetCourseQuery({})
+  const { data: eventListData } = useGetEventListQuery({})
+  const { data: activityData, isLoading: isActivityLoading } = useGetScoreLogsQuery({})
+  const [page, setPage] = useState(1)
+
+  const [isSheetOpen, setIsSheetOpen] = useState(false)
+  const logScore = () => {
+    setIsSheetOpen(true)
+  }
+
+  const validateForm = (values: onSubmitProps) => {
+    return validate(values, constraints) || {}
+  }
+
+  const [registerScoreLog, { isSuccess, error }] = useLogScoreMutation()
+  const onSubmit = async (values: onSubmitProps) => {
+    console.log('Form Values:', values)
+    await rtkMutation(registerScoreLog, values)
+  }
+
+  useEffect(() => {
+    if (isSuccess) {
+      showAlert('Score log creation successful!', 'success')
+      setIsSheetOpen(false)
+    } else if (error) {
+      showAlert(getErrorMessage(error), 'error')
+    }
+  }, [isSuccess, error])
+
   const [scoringTrendState, setScoringTrendState] = useState({
     series: [
       {
@@ -114,98 +196,13 @@ export default function Page() {
     { stat: 'Putts per Round', value: 85, color: '#F49E0C' },
   ]
 
-  const [page, setPage] = useState(1)
-  const [isLoading, setIsLoading] = useState(false)
-
-  // Dummy activity feed data
-  const activityFeed: ActivityFeed[] = [
-    {
-      id: '1',
-      date: '2026-01-10',
-      course: 'Pebble Beach Golf Links',
-      score: 82,
-      diff: '-3',
-      matchType: 'Stroke Play',
-    },
-    {
-      id: '2',
-      date: '2026-01-08',
-      course: 'Augusta National',
-      score: 88,
-      diff: '+4',
-      matchType: 'Match Play',
-    },
-    {
-      id: '3',
-      date: '2026-01-05',
-      course: 'St Andrews Old Course',
-      score: 79,
-      diff: '-6',
-      matchType: 'Stroke Play',
-    },
-    {
-      id: '4',
-      date: '2026-01-03',
-      course: 'Pinehurst No. 2',
-      score: 85,
-      diff: '+1',
-      matchType: 'Scramble',
-    },
-    {
-      id: '5',
-      date: '2025-12-28',
-      course: 'TPC Sawgrass',
-      score: 81,
-      diff: '-4',
-      matchType: 'Stroke Play',
-    },
-    {
-      id: '6',
-      date: '2025-12-22',
-      course: 'Whistling Straits',
-      score: 84,
-      diff: '+2',
-      matchType: 'Match Play',
-    },
-    {
-      id: '7',
-      date: '2025-12-18',
-      course: 'Torrey Pines',
-      score: 78,
-      diff: '-7',
-      matchType: 'Stroke Play',
-    },
-    {
-      id: '8',
-      date: '2025-12-15',
-      course: 'Bethpage Black',
-      score: 91,
-      diff: '+8',
-      matchType: 'Best Ball',
-    },
-    {
-      id: '9',
-      date: '2025-12-10',
-      course: 'Oakmont Country Club',
-      score: 83,
-      diff: '-2',
-      matchType: 'Stroke Play',
-    },
-    {
-      id: '10',
-      date: '2025-12-05',
-      course: 'Shinnecock Hills',
-      score: 86,
-      diff: '+3',
-      matchType: 'Scramble',
-    },
-  ]
+  const activity_data = activityData?.data || []
 
   const columns: TableColumn<ActivityFeed>[] = [
     {
       key: 'date',
       header: 'DATE',
-      accessor: (row) => row.date,
+      accessor: (row) => row.created_at,
       render: (value) => (
         <span className="text-sm font-medium text-gray-900">
           {new Date(value as string).toLocaleDateString('en-US', {
@@ -219,39 +216,39 @@ export default function Page() {
     {
       key: 'course',
       header: 'COURSE',
-      accessor: (row) => row.course,
+      accessor: (row) => row.course_name,
       render: (value) => <span className="text-sm font-medium text-gray-700">{value}</span>,
     },
     {
       key: 'score',
       header: 'SCORE',
-      accessor: (row) => row.score,
+      accessor: (row) => row.gross_score,
       render: (value) => <span className="text-sm font-semibold text-gray-900">{value}</span>,
     },
-    {
-      key: 'diff',
-      header: 'DIFF',
-      accessor: (row) => row.diff,
-      render: (value) => {
-        const diff = value as string
-        const isPositive = diff.startsWith('+')
-        const isNegative = diff.startsWith('-')
+    // {
+    //   key: 'diff',
+    //   header: 'DIFF',
+    //   accessor: (row) => row.diff,
+    //   render: (value) => {
+    //     const diff = value as string
+    //     const isPositive = diff.startsWith('+')
+    //     const isNegative = diff.startsWith('-')
 
-        return (
-          <span
-            className={`text-sm font-semibold ${
-              isNegative ? 'text-green-600' : isPositive ? 'text-red-600' : 'text-gray-600'
-            }`}
-          >
-            {diff}
-          </span>
-        )
-      },
-    },
+    //     return (
+    //       <span
+    //         className={`text-sm font-semibold ${
+    //           isNegative ? 'text-green-600' : isPositive ? 'text-red-600' : 'text-gray-600'
+    //         }`}
+    //       >
+    //         {diff}
+    //       </span>
+    //     )
+    //   },
+    // },
     {
       key: 'matchType',
       header: 'MATCH TYPE',
-      accessor: (row) => row.matchType,
+      accessor: (row) => row.match_type,
       render: (value) => (
         <span className="inline-flex items-center rounded-full bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-700/10">
           {value}
@@ -342,9 +339,19 @@ export default function Page() {
         </div>
 
         <div className="mt-5">
-          <p className="quick-actions mb-5">Activity Feed</p>
+          <div className="w-full flex items-center justify-between mb-5">
+            {' '}
+            <p className="quick-actions">Activity Feed</p>
+            <Button
+              variant="ghost"
+              className="flex items-center gap-2 add-event-btn border-0"
+              onClick={logScore}
+            >
+              <Plus size={18} /> Log New Score
+            </Button>
+          </div>
           <DynamicTable
-            data={activityFeed}
+            data={activity_data}
             columns={columns}
             filters={[]}
             onRowClick={(activity) => console.log('Clicked row:', activity)}
@@ -352,12 +359,125 @@ export default function Page() {
             showFilters={false}
             showPagination={true}
             emptyMessage="No activity found"
-            isLoading={isLoading}
+            isLoading={isActivityLoading}
             useServerSide={false}
             onPageChange={handlePageChange}
           />
         </div>
       </div>
+
+      <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
+        <SheetContent className="overflow-auto">
+          <SheetHeader>
+            <SheetTitle>Create Event</SheetTitle>
+            <SheetDescription></SheetDescription>
+            <Form
+              onSubmit={onSubmit}
+              validate={validateForm}
+              render={({ handleSubmit, form, submitting }) => {
+                return (
+                  <form onSubmit={handleSubmit}>
+                    <Select
+                      label="Event Name"
+                      name="eventName"
+                      placeholder="Select Event Name"
+                      form={form}
+                      options={
+                        eventListData?.map(
+                          (event: { id: number; event_name: string; course_name: string }) => ({
+                            label: event.event_name,
+                            value: event.id,
+                          })
+                        ) || []
+                      }
+                    />
+
+                    <DatalistInput
+                      label="Course Name"
+                      name="courseName"
+                      placeholder="Type or select course name"
+                      form={form}
+                      options={
+                        courseData?.map((course: { course_name: string }) => ({
+                          label: course.course_name,
+                          value: course.course_name,
+                        })) || []
+                      }
+                    />
+
+                    <Select
+                      label="Match Type"
+                      name="matchType"
+                      placeholder="Select Match Type"
+                      form={form}
+                      options={[
+                        { label: 'Stroke Play', value: 'stroke_play' },
+                        { label: 'Match Play', value: 'match_play' },
+                        { label: 'Stableford', value: 'stableford' },
+                        { label: 'Scramble', value: 'scramble' },
+                        { label: 'Best Ball', value: 'best_ball' },
+                        { label: 'Fourball', value: 'fourball' },
+                        { label: 'Foursomes (Alternate Shot)', value: 'foursomes' },
+                        { label: 'Skins', value: 'skins' },
+                        { label: 'Medal Play', value: 'medal_play' },
+                        { label: 'Texas Scramble', value: 'texas_scramble' },
+                        { label: 'Greensomes', value: 'greensomes' },
+                        { label: 'Flag Tournament', value: 'flag_tournament' },
+                        { label: 'Chapman (Pinehurst)', value: 'chapman' },
+                        { label: 'Shamble', value: 'shamble' },
+                      ]}
+                    />
+
+                    <div className="flex gap-3 items-center">
+                      <Input
+                        label="Gross Score"
+                        name="grossScore"
+                        type="number"
+                        placeholder="Enter gross score"
+                        form={form}
+                      />
+                      <Input
+                        label="Fairway Hits"
+                        name="fairwayHits"
+                        type="number"
+                        placeholder="Enter fairway hits"
+                        form={form}
+                      />
+                    </div>
+
+                    <div className="flex gap-3 items-center">
+                      <Input
+                        label="Greens In Reg (GIR)"
+                        name="greensInReg"
+                        type="number"
+                        placeholder="Enter greens in reg"
+                        form={form}
+                      />
+                      <Input
+                        label="Putt Per Round"
+                        name="puttPerRound"
+                        type="number"
+                        placeholder="Enter putt per round"
+                        form={form}
+                      />
+                    </div>
+
+                    <ImageSelector name="scoreCard" label="Upload Score Card" form={form} />
+
+                    <button
+                      type="submit"
+                      className="auth-submit w-full max-w-[490px] h-[49px] py-1 px-2 mt-4 cursor-pointer"
+                      disabled={submitting}
+                    >
+                      {submitting ? <Loader /> : 'Submit for verification'}
+                    </button>
+                  </form>
+                )
+              }}
+            />
+          </SheetHeader>
+        </SheetContent>
+      </Sheet>
     </>
   )
 }

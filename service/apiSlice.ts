@@ -16,6 +16,7 @@ const apiSlice = createApi({
     'golf_tip',
     'instructors',
     'news',
+    'score_log',
   ],
   endpoints: (builder) => ({}),
   keepUnusedDataFor: 60,

@@ -20,6 +20,29 @@ import action5 from '@/public/dashboard/action5.svg'
 import action6 from '@/public/dashboard/action6.svg'
 import Link from 'next/link'
 import DashboardEventCard from '@/components/dashboard/cards/DashboardEventCard'
+import Loader from '@/components/website/loaders/Loader'
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+} from '@/components/ui/sheet'
+import { useEffect, useState } from 'react'
+import ImageSelector from '@/components/auth/ImageSelector'
+import DatalistInput from '@/components/auth/DatalistInput'
+import { useGetCourseQuery } from '@/service/data.service'
+import Input from '@/components/auth/Input'
+import { Form } from 'react-final-form'
+import { validate } from 'validate.js'
+import rtkMutation from '@/utils/rtkMutation'
+import { getErrorMessage } from '@/utils/formatErrorResponse'
+import Select from '@/components/auth/Select'
+import { useGetEventListQuery } from '@/service/event.service'
+import { useGetScoreLogsQuery, useLogScoreMutation } from '@/service/scorelog.service'
+import { showAlert } from '@/utils/showAlert'
+import { formatDistanceToNow } from 'date-fns'
+import Spinner from '@/components/website/loaders/Spinner'
 
 interface UserState {
   user: {
@@ -32,36 +55,6 @@ interface UserState {
 interface RootState {
   user: UserState
 }
-
-const eventData = [
-  {
-    title: 'You Logged a verified match at Augusta Muni.',
-    date: 'Yesterday',
-    type: 'event',
-    feedback: 'Registered',
-  },
-  {
-    title: 'Midtown Monthly Open',
-    date: '2 days ago',
-    type: 'event',
-    action_text: 'Register Now',
-    action: () => alert('Register clicked'),
-  },
-  {
-    title: 'Midtown Monthly Open',
-    date: '2025-06-15 • 08:00AM',
-    type: 'user',
-    action_text: 'Register Now',
-    action: () => alert('Register clicked'),
-  },
-  {
-    title: 'Midtown Monthly Open',
-    date: '2 days ago',
-    type: 'event',
-    action_text: 'Register Now',
-    action: () => alert('Register clicked'),
-  },
-]
 
 const feedData = [
   {
@@ -86,8 +79,67 @@ const feedData = [
   },
 ]
 
+const constraints = {
+  eventName: {
+    presence: true,
+  },
+  matchType: {
+    presence: true,
+  },
+  grossScore: {
+    presence: true,
+  },
+  fairwayHits: {
+    presence: true,
+  },
+  greensInReg: {
+    presence: true,
+  },
+  puttPerRound: {
+    presence: true,
+  },
+  courseName: {
+    presence: true,
+  },
+  scoreCard: {
+    presence: true,
+  },
+}
+
+type onSubmitProps = {
+  [key: string]: undefined | string
+}
+
 export default function Page() {
+  const { data: courseData } = useGetCourseQuery({})
+  const { data: eventListData, isLoading: isEventListLoading } = useGetEventListQuery({})
+  const { data: activityData, isLoading: isActivityLoading } = useGetScoreLogsQuery({})
+
+  const [isSheetOpen, setIsSheetOpen] = useState(false)
   const { user } = useSelector((state: RootState) => state.user)
+
+  const logScore = () => {
+    setIsSheetOpen(true)
+  }
+
+  const validateForm = (values: onSubmitProps) => {
+    return validate(values, constraints) || {}
+  }
+
+  const [registerScoreLog, { isSuccess, error }] = useLogScoreMutation()
+  const onSubmit = async (values: onSubmitProps) => {
+    console.log('Form Values:', values)
+    await rtkMutation(registerScoreLog, values)
+  }
+
+  useEffect(() => {
+    if (isSuccess) {
+      showAlert('Score log creation successful!', 'success')
+      setIsSheetOpen(false)
+    } else if (error) {
+      showAlert(getErrorMessage(error), 'error')
+    }
+  }, [isSuccess, error])
 
   return (
     <>
@@ -139,14 +191,14 @@ export default function Page() {
           <p className="quick-actions">Quick Actions</p>
 
           <div className="flex flex-col items-center gap-3 md:flex-row">
-            <Action title="Log Score" icon={action1} link="#" />
-            <Action title="Events" icon={action2} link="#" />
-            <Action title="Sponsor" icon={action3} link="#" />
+            <Action title="Log Score" icon={action1} link="#" action={logScore} />
+            <Action title="Events" icon={action2} link="/dashboard/events" />
+            <Action title="Sponsor" icon={action3} link="/dashboard/sponsorship" />
           </div>
           <div className="flex flex-col items-center gap-3 md:flex-row">
-            <Action title="Communities" icon={action4} link="#" />
-            <Action title="Instructors" icon={action5} link="#" />
-            <Action title="Tips" icon={action6} link="#" />
+            <Action title="Communities" icon={action4} link="/dashboard/communities" />
+            <Action title="Instructors" icon={action5} link="/dashboard/instructors" />
+            <Action title="Tips" icon={action6} link="/dashboard/golf-tips" />
           </div>
         </div>
 
@@ -155,38 +207,192 @@ export default function Page() {
             <div className="flex w-full justify-between items-center">
               <p className="quick-actions">Activity Feed</p>
               <Link
-                href={'#'}
+                href="/dashboard/stats"
                 className="border border-[#DFE4EC] bg-white text-[#928FA8] h-[28px] w-[28px] flex items-center justify-center"
               >
                 <FaChevronRight />
               </Link>
             </div>
 
-            <div className="mt-8 flex flex-col gap-1">
-              {feedData.map((item, index) => (
-                <DashboardEventCard key={index} {...item} />
-              ))}
-            </div>
+            {isActivityLoading ? (
+              <Spinner loading={isActivityLoading} />
+            ) : (
+              <div className="mt-8 flex flex-col gap-1">
+                {activityData?.data?.map(
+                  (item: {
+                    id: number
+                    created_at: string
+                    course_name: string
+                    gross_score: number
+                    diff?: string
+                    match_type: string
+                  }) => (
+                    <DashboardEventCard
+                      key={item.id}
+                      title={item.match_type + ' | ' + item.course_name}
+                      date={new Date(item.created_at).toLocaleDateString('en-US', {
+                        month: 'short',
+                        day: 'numeric',
+                        year: 'numeric',
+                      })}
+                      type="user"
+                    />
+                  )
+                )}
+              </div>
+            )}
           </div>
           <div className="w-full flex-col border border-[#EAECF0] p-4 h-[410px] overflow-y-auto">
             <div className="flex w-full justify-between items-center">
               <p className="quick-actions">Upcoming Events</p>
               <Link
-                href={'#'}
+                href="/dashboard/events"
                 className="border border-[#DFE4EC] bg-white text-[#928FA8] h-[28px] w-[28px] flex items-center justify-center"
               >
                 <FaChevronRight />
               </Link>
             </div>
 
-            <div className="mt-8 flex flex-col gap-1">
-              {eventData.map((item, index) => (
-                <DashboardEventCard key={index} {...item} />
-              ))}
-            </div>
+            {isEventListLoading ? (
+              <Spinner loading={isEventListLoading} />
+            ) : (
+              <div className="mt-8 flex flex-col gap-1">
+                {eventListData?.map(
+                  (item: {
+                    id: number
+                    event_name: string
+                    event_date: string
+                    event_time: string
+                  }) => (
+                    <DashboardEventCard
+                      key={item.id}
+                      title={item.event_name}
+                      date={formatDistanceToNow(new Date(item.event_date + ' ' + item.event_time), {
+                        addSuffix: true,
+                      })}
+                      type="event"
+                      link={`/dashboard/events/${item.id}`}
+                    />
+                  )
+                )}
+              </div>
+            )}
           </div>
         </div>
       </div>
+
+      <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
+        <SheetContent className="overflow-auto">
+          <SheetHeader>
+            <SheetTitle>Create Event</SheetTitle>
+            <SheetDescription></SheetDescription>
+            <Form
+              onSubmit={onSubmit}
+              validate={validateForm}
+              render={({ handleSubmit, form, submitting }) => {
+                return (
+                  <form onSubmit={handleSubmit}>
+                    <Select
+                      label="Event Name"
+                      name="eventName"
+                      placeholder="Select Event Name"
+                      form={form}
+                      options={
+                        eventListData?.map(
+                          (event: { id: number; event_name: string; course_name: string }) => ({
+                            label: event.event_name,
+                            value: event.id,
+                          })
+                        ) || []
+                      }
+                    />
+
+                    <DatalistInput
+                      label="Course Name"
+                      name="courseName"
+                      placeholder="Type or select course name"
+                      form={form}
+                      options={
+                        courseData?.map((course: { course_name: string }) => ({
+                          label: course.course_name,
+                          value: course.course_name,
+                        })) || []
+                      }
+                    />
+
+                    <Select
+                      label="Match Type"
+                      name="matchType"
+                      placeholder="Select Match Type"
+                      form={form}
+                      options={[
+                        { label: 'Stroke Play', value: 'stroke_play' },
+                        { label: 'Match Play', value: 'match_play' },
+                        { label: 'Stableford', value: 'stableford' },
+                        { label: 'Scramble', value: 'scramble' },
+                        { label: 'Best Ball', value: 'best_ball' },
+                        { label: 'Fourball', value: 'fourball' },
+                        { label: 'Foursomes (Alternate Shot)', value: 'foursomes' },
+                        { label: 'Skins', value: 'skins' },
+                        { label: 'Medal Play', value: 'medal_play' },
+                        { label: 'Texas Scramble', value: 'texas_scramble' },
+                        { label: 'Greensomes', value: 'greensomes' },
+                        { label: 'Flag Tournament', value: 'flag_tournament' },
+                        { label: 'Chapman (Pinehurst)', value: 'chapman' },
+                        { label: 'Shamble', value: 'shamble' },
+                      ]}
+                    />
+
+                    <div className="flex gap-3 items-center">
+                      <Input
+                        label="Gross Score"
+                        name="grossScore"
+                        type="number"
+                        placeholder="Enter gross score"
+                        form={form}
+                      />
+                      <Input
+                        label="Fairway Hits"
+                        name="fairwayHits"
+                        type="number"
+                        placeholder="Enter fairway hits"
+                        form={form}
+                      />
+                    </div>
+
+                    <div className="flex gap-3 items-center">
+                      <Input
+                        label="Greens In Reg (GIR)"
+                        name="greensInReg"
+                        type="number"
+                        placeholder="Enter greens in reg"
+                        form={form}
+                      />
+                      <Input
+                        label="Putt Per Round"
+                        name="puttPerRound"
+                        type="number"
+                        placeholder="Enter putt per round"
+                        form={form}
+                      />
+                    </div>
+
+                    <ImageSelector name="scoreCard" label="Upload Score Card" form={form} />
+
+                    <button
+                      type="submit"
+                      className="auth-submit w-full max-w-[490px] h-[49px] py-1 px-2 mt-4 cursor-pointer"
+                      disabled={submitting}
+                    >
+                      {submitting ? <Loader /> : 'Submit for verification'}
+                    </button>
+                  </form>
+                )
+              }}
+            />
+          </SheetHeader>
+        </SheetContent>
+      </Sheet>
     </>
   )
 }
