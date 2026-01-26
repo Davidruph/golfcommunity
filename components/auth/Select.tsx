@@ -17,7 +17,7 @@ type SelectProps = {
 
 const Select = ({ name, label, placeholder, form, options }: SelectProps) => {
   return (
-    <div className="w-full flex flex-col mb-3">
+    <div className="w-full flex flex-col mb-3 max-w-[490px]">
       <label htmlFor={name} className="auth-label mb-2">
         {label}
       </label>

@@ -8,10 +8,11 @@ type InputProps = {
   label?: string
   placeholder?: string
   form: FormApi
+  width?: string
 }
-const Input = ({ type = 'text', name, label, placeholder, form }: InputProps) => {
+const Input = ({ type = 'text', name, label, placeholder, form, width = 'w-full' }: InputProps) => {
   return (
-    <div className="w-full flex flex-col mb-3">
+    <div className={`${width} flex flex-col mb-3 max-w-[490px]`}>
       <label htmlFor={name} className="auth-label mb-2">
         {label}
       </label>

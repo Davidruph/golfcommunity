@@ -38,11 +38,13 @@ import { validate } from 'validate.js'
 import rtkMutation from '@/utils/rtkMutation'
 import { getErrorMessage } from '@/utils/formatErrorResponse'
 import Select from '@/components/auth/Select'
-import { useGetEventListQuery } from '@/service/event.service'
+import { useGetEventListQuery, useRegisterEventAttendanceMutation } from '@/service/event.service'
 import { useGetScoreLogsQuery, useLogScoreMutation } from '@/service/scorelog.service'
 import { showAlert } from '@/utils/showAlert'
 import { formatDistanceToNow } from 'date-fns'
 import Spinner from '@/components/website/loaders/Spinner'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { Calendar, HandCoins, MapPin, UsersRound } from 'lucide-react'
 
 interface UserState {
   user: {
@@ -55,29 +57,6 @@ interface UserState {
 interface RootState {
   user: UserState
 }
-
-const feedData = [
-  {
-    title: 'Midtown Monthly Open',
-    date: '2025-06-15 • 08:00AM',
-    type: 'verified',
-  },
-  {
-    title: 'Marcus Green posted Community News',
-    date: '2 days ago',
-    type: 'news',
-  },
-  {
-    title: 'Marcus Green posted Community News',
-    date: 'Yesterday',
-    type: 'user',
-  },
-  {
-    title: 'John Paul posted Community News',
-    date: '2 days ago',
-    type: 'news',
-  },
-]
 
 const constraints = {
   eventName: {
@@ -110,16 +89,45 @@ type onSubmitProps = {
   [key: string]: undefined | string
 }
 
+interface Event {
+  id: number
+  main_event_id: number
+  event_name: string
+  event_date: string
+  event_time: string
+  fees?: number | string
+  total_allowed_spots: number
+  registered_spots?: number
+  user_event_status?: number
+  description?: string
+  course_name?: string
+  location?: string
+  created_by?: number
+  timezone?: string
+  banner_image?: string | null
+  community?: number | string
+  fee_link?: string | null
+}
+
 export default function Page() {
   const { data: courseData } = useGetCourseQuery({})
   const { data: eventListData, isLoading: isEventListLoading } = useGetEventListQuery({})
   const { data: activityData, isLoading: isActivityLoading } = useGetScoreLogsQuery({})
+  const [isDialogOpen, setIsDialogOpen] = useState(false)
+
+  const [event, setEvent] = useState<Event | null>(null)
 
   const [isSheetOpen, setIsSheetOpen] = useState(false)
   const { user } = useSelector((state: RootState) => state.user)
 
   const logScore = () => {
     setIsSheetOpen(true)
+  }
+
+  const handleAttendEvent = async (event: Event) => {
+    if (!event) return
+    setIsDialogOpen(true)
+    setEvent(event)
   }
 
   const validateForm = (values: onSubmitProps) => {
@@ -140,6 +148,28 @@ export default function Page() {
       showAlert(getErrorMessage(error), 'error')
     }
   }, [isSuccess, error])
+
+  const [attendEvent, { isSuccess: attendSuccess, error: attendError, isLoading: attendLoading }] =
+    useRegisterEventAttendanceMutation()
+
+  const handleAttendConfirm = async () => {
+    if (!event) return
+
+    const confirmed = window.confirm('Are you sure you want to register for this event?')
+    if (!confirmed) return
+
+    await rtkMutation(attendEvent, { eventId: event.main_event_id })
+    setIsDialogOpen(false)
+    setEvent(null)
+  }
+
+  useEffect(() => {
+    if (attendSuccess) {
+      showAlert('Event attendance registered successfully!', 'success')
+    } else if (attendError) {
+      showAlert(getErrorMessage(attendError), 'error')
+    }
+  }, [attendSuccess, attendError])
 
   return (
     <>
@@ -257,24 +287,21 @@ export default function Page() {
               <Spinner loading={isEventListLoading} />
             ) : (
               <div className="mt-8 flex flex-col gap-1">
-                {eventListData?.map(
-                  (item: {
-                    id: number
-                    event_name: string
-                    event_date: string
-                    event_time: string
-                  }) => (
-                    <DashboardEventCard
-                      key={item.id}
-                      title={item.event_name}
-                      date={formatDistanceToNow(new Date(item.event_date + ' ' + item.event_time), {
-                        addSuffix: true,
-                      })}
-                      type="event"
-                      link={`/dashboard/events/${item.id}`}
-                    />
-                  )
-                )}
+                {eventListData?.map((item: Event) => (
+                  <DashboardEventCard
+                    key={item.id}
+                    title={item.event_name}
+                    date={formatDistanceToNow(new Date(item.event_date + ' ' + item.event_time), {
+                      addSuffix: true,
+                    })}
+                    user_event_status={item.user_event_status}
+                    type="event"
+                    link={`/dashboard/events/${item.id}`}
+                    action={() => {
+                      handleAttendEvent(item)
+                    }}
+                  />
+                ))}
               </div>
             )}
           </div>
@@ -393,6 +420,77 @@ export default function Page() {
           </SheetHeader>
         </SheetContent>
       </Sheet>
+
+      <Dialog open={!!event} onOpenChange={() => setEvent(null)}>
+        <DialogContent className="lg:max-w-[713px] sm:max-w-sm w-full px-2 p-0 max-h-[588px]">
+          <DialogHeader className="hidden">
+            <DialogTitle>{event?.event_name}</DialogTitle>
+          </DialogHeader>
+
+          <div className="w-full flex flex-col items-center md:flex-row max-h-full">
+            <div
+              className="relative w-full hidden md:block h-full p-[24px] rounded-md"
+              style={{
+                backgroundImage: "url('/dashboard/event.png')",
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+              }}
+            >
+              <span className="text-white flex items-center gap-2 absolute bottom-5 left-5">
+                <MapPin />
+                {event?.location}
+              </span>
+            </div>
+            <div className="w-full flex flex-col gap-4 mt-5 p-5">
+              <div className="flex justify-start gap-2 flex-col mb-2">
+                <span className="entry-fee-text flex items-center gap-2">
+                  <Calendar size={16} />
+                  Date & Time
+                </span>
+                <span className="entry-course">
+                  {event?.event_date} @ {event?.event_time}
+                </span>
+              </div>
+
+              <article className="flex flex-col gap-2 mb-2">
+                <span className="entry-fee-text flex items-center gap-2">
+                  <HandCoins size={16} />
+                  Entry Fee
+                </span>
+                <span className="entry-fee">{event?.fees ? `$${event.fees}` : 'Free'}</span>
+              </article>
+
+              <article className="flex flex-col gap-2 mb-2">
+                <span className="entry-fee-text flex items-center gap-2">
+                  <MapPin size={16} />
+                  Golf Course
+                </span>
+                <span className="entry-course">{event?.course_name}</span>
+              </article>
+
+              <article className="flex flex-col gap-2 mb-6">
+                <span className="entry-fee-text flex items-center gap-2">
+                  <UsersRound size={16} /> Registrations
+                </span>
+                <span className="entry-course">{event?.registered_spots} Registrations</span>
+              </article>
+
+              <article className="flex flex-col gap-2 mb-3">
+                <span className="entry-fee-text">About Event</span>
+                <span className="entry-course">{event?.description}</span>
+              </article>
+
+              <button
+                disabled={attendLoading}
+                onClick={handleAttendConfirm}
+                className="px-4 py-2 bg-[#069769] text-white rounded hover:bg-[#057a56] w-full mt-3"
+              >
+                {attendLoading ? <Loader /> : 'Secure A Spot'}
+              </button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </>
   )
 }

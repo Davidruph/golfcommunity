@@ -1,5 +1,5 @@
 import apiSlice from './apiSlice'
-import { USERS, CHANGE_USER_STATUS } from './constants'
+import { USERS, CHANGE_USER_STATUS, PROFILE } from './constants'
 
 const userApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
@@ -54,6 +54,14 @@ const userApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ['user'],
     }),
+    updateUserProfile: builder.mutation({
+      query: (userData) => ({
+        url: `${PROFILE}/${userData.id}`,
+        method: 'PATCH',
+        body: userData,
+      }),
+      invalidatesTags: ['user'],
+    }),
   }),
 })
 
@@ -63,4 +71,5 @@ export const {
   useUpdateUserMutation,
   useDeleteUserMutation,
   useToggleUserStatusMutation,
+  useUpdateUserProfileMutation,
 } = userApiSlice

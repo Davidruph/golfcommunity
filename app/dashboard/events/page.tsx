@@ -570,7 +570,12 @@ export default function Page() {
                       }
                     />
 
-                    <ImageSelector name="bannerImage" label="Upload Event Graphics" form={form} />
+                    <ImageSelector
+                      name="bannerImage"
+                      label="Upload Event Graphics"
+                      form={form}
+                      existingImage={event?.banner_image || ''}
+                    />
 
                     <Textarea
                       label="Description"

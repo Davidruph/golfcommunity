@@ -40,11 +40,11 @@ const baseData = {
       url: '/dashboard',
       icon: dashboard,
     },
-    {
-      name: 'My Profile',
-      url: '/dashboard/profile',
-      icon: profile,
-    },
+    // {
+    //   name: 'My Profile',
+    //   url: '/dashboard/profile',
+    //   icon: profile,
+    // },
     {
       name: 'My Stats',
       url: '/dashboard/stats',

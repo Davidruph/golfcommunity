@@ -11,8 +11,7 @@ type Props = {
   date: string
   type?: string
   action?: () => void
-  action_text?: string | undefined
-  feedback?: string
+  user_event_status?: number
 }
 const DashboardEventCard = (props: Props) => {
   return (
@@ -29,12 +28,12 @@ const DashboardEventCard = (props: Props) => {
       <div className="flex flex-col gap-1 items-start justify-start">
         <p className="dashboard-event-card-title">{props.title}</p>
         <p className="dashboard-event-card-date">{props.date}</p>
-        {props.action ? (
-          <button onClick={props.action} className="dashboard-event-card-btn">
-            {props.action_text}
+        {props.action && props.user_event_status != 1 ? (
+          <button onClick={props.action} className="dashboard-event-card-btn border p-2 rounded-md">
+            Register
           </button>
-        ) : props.feedback ? (
-          <p className="dashboard-event-card-btn">{props.feedback}</p>
+        ) : props.user_event_status == 1 ? (
+          <p className="dashboard-event-card-btn">Registered</p>
         ) : null}
       </div>
     </div>
