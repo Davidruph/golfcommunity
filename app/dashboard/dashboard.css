@@ -537,3 +537,35 @@
   letter-spacing: 0%;
   color: #ffffff;
 }
+.donate-confirm-fee {
+  font-family: Geist;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 100%;
+  letter-spacing: 0%;
+  color: #079769;
+}
+.donate-confirm-name {
+  font-family: Geist;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 100%;
+  letter-spacing: 0%;
+  color: #000000;
+}
+.donate-budget {
+  font-family: Geist;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 0%;
+  color: #9f9fa8;
+}
+.donate-info {
+  font-family: Geist;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 0%;
+  color: #9f9fa8;
+}

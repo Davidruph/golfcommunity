@@ -826,6 +826,23 @@ a:hover .button-icon {
   color: white;
   cursor: pointer;
 }
+.auth-submit-donate {
+  opacity: 1;
+  background-color: #fe532d;
+  box-shadow: 0px 6px 14px 0px #0000000f;
+  box-shadow: 0px 26px 26px 0px #0000000d;
+  box-shadow: 0px 58px 35px 0px #00000008;
+  box-shadow: 0px 103px 41px 0px #00000003;
+  box-shadow: 0px 161px 45px 0px #00000000;
+  box-shadow: 0px 4px 4px 0px #ffffff66 inset;
+  font-family: var(--font-geist);
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 0%;
+  color: white;
+  cursor: pointer;
+}
 /* Prevent autocomplete from changing input styles */
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
