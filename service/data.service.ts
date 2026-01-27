@@ -39,6 +39,12 @@ const dataApiSlice = apiSlice.injectEndpoints({
         method: 'GET',
       }),
     }),
+    getAdminOverview: builder.query({
+      query: () => ({
+        url: 'admin_overview',
+        method: 'GET',
+      }),
+    }),
   }),
 })
 
@@ -49,4 +55,5 @@ export const {
   useUsersQuery,
   useCommunitiesQuery,
   useGetCourseQuery,
+  useGetAdminOverviewQuery,
 } = dataApiSlice

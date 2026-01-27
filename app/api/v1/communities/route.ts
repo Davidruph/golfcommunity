@@ -52,7 +52,7 @@ export async function GET(request: Request) {
     }
 
     if (activityFilter) {
-      whereConditions.push('community_members.activity = ?')
+      whereConditions.push('communities.activity = ?')
       queryParams.push(activityFilter)
     }
 

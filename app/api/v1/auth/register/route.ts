@@ -44,7 +44,7 @@ export async function POST(req: NextRequest) {
       last_name: body.lastName,
       email: body.email,
       password: hashedPassword,
-      phone_number: body.phoneNumber,
+      // phone_number: body.phoneNumber,
       country_id: body.country,
       state_id: body.state,
       city_id: body.city,

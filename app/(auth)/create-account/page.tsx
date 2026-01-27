@@ -26,9 +26,9 @@ const constraints = {
   lastName: {
     presence: true,
   },
-  phoneNumber: {
-    presence: true,
-  },
+  // phoneNumber: {
+  //   presence: true,
+  // },
   email: {
     presence: true,
     email: true,
@@ -195,13 +195,13 @@ const Page = () => {
                       form={form}
                     />
                   </div>
-                  <Input
+                  {/* <Input
                     label="Phone Number"
                     name="phoneNumber"
                     type="number"
                     placeholder="Enter Phone Number"
                     form={form}
-                  />
+                  /> */}
                   <div className="flex items-center gap-0 md:gap-2 flex-col md:flex-row w-full">
                     <Select
                       name="country"

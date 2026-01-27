@@ -18,63 +18,21 @@ import cardicon2 from '@/public/admin/cardicon2.svg'
 import cardicon3 from '@/public/admin/cardicon3.svg'
 import cardicon4 from '@/public/admin/cardicon4.svg'
 import DynamicTable, { TableColumn } from '@/components/table/DynamicTable'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useGetCommunitiesQuery } from '@/service/community.service'
 import { GoDotFill } from 'react-icons/go'
 import { Eye, EyeOff } from 'lucide-react'
 
-const cardData = [
-  {
-    title: 'Total Users',
-    header: '12,849',
-    details: '+12.5% from last month',
-    iconSrc: cardicon1,
-  },
-  {
-    title: 'Total Communities',
-    header: '342',
-    details: '+8 new this week',
-    iconSrc: cardicon2,
-  },
-  {
-    title: 'Total Sponsors',
-    header: '1,248',
-    details: '+23.1% from last month',
-    iconSrc: cardicon3,
-  },
-  {
-    title: 'Total Users',
-    header: '1,250',
-    details: '+23.1% from last month',
-    iconSrc: cardicon4,
-  },
-  {
-    title: 'Total Users',
-    header: '12,849',
-    details: '+12.5% from last month',
-    iconSrc: cardicon1,
-  },
-  {
-    title: 'Total Communities',
-    header: '342',
-    details: '+8 new this week',
-    iconSrc: cardicon2,
-  },
-  {
-    title: 'Total Sponsors',
-    header: '1,248',
-    details: '+23.1% from last month',
-    iconSrc: cardicon3,
-  },
-  {
-    title: 'Total Users',
-    header: '1,250',
-    details: '+23.1% from last month',
-    iconSrc: cardicon4,
-  },
-]
+const iconMap: Record<string, any> = {
+  users: cardicon1,
+  communities: cardicon2,
+  sponsors: cardicon3,
+  captains: cardicon4,
+}
 
 import dynamic from 'next/dynamic'
+import { useGetAdminOverviewQuery } from '@/service/data.service'
+import Spinner from '@/components/website/loaders/Spinner'
 
 const Chart = dynamic(() => import('react-apexcharts'), {
   ssr: false,
@@ -102,6 +60,39 @@ export default function Page() {
     limit: 10,
     activity: 'High',
   })
+
+  const { data: overviewData, isLoading: isOverviewLoading } = useGetAdminOverviewQuery({})
+  const userGrowthCategories = overviewData?.userGrowth?.categories
+  const userGrowthData = overviewData?.userGrowth?.data
+
+  const cardData = overviewData
+    ? [
+        {
+          title: 'Total Users',
+          header: overviewData.totalUsers.count.toLocaleString(),
+          details: `${overviewData.totalUsers.change} ${overviewData.totalUsers.period}`,
+          iconSrc: iconMap.users,
+        },
+        {
+          title: 'Total Communities',
+          header: overviewData.totalCommunities.count.toLocaleString(),
+          details: `${overviewData.totalCommunities.change} ${overviewData.totalCommunities.period}`,
+          iconSrc: iconMap.communities,
+        },
+        {
+          title: 'Total Sponsors',
+          header: overviewData.totalSponsors.count.toLocaleString(),
+          details: `${overviewData.totalSponsors.change} ${overviewData.totalSponsors.period}`,
+          iconSrc: iconMap.sponsors,
+        },
+        {
+          title: 'Total Captains',
+          header: overviewData.totalCaptains.count.toLocaleString(),
+          details: overviewData.totalCaptains.period,
+          iconSrc: iconMap.captains,
+        },
+      ]
+    : []
 
   const communities: Community[] = communitiesData || []
 
@@ -181,7 +172,7 @@ export default function Page() {
     series: [
       {
         name: 'User Growth',
-        data: [10, 41, 35, 51, 49, 62, 69, 91, 148],
+        data: userGrowthData,
       },
     ],
     options: {
@@ -206,26 +197,53 @@ export default function Page() {
       },
       grid: {
         row: {
-          colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
+          colors: ['#f3f3f3', 'transparent'],
           opacity: 0.5,
         },
       },
       xaxis: {
-        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'],
+        categories: userGrowthCategories,
       },
     },
   })
 
-  // ...existing code...
+  // If you want the chart to update when overviewData changes:
+  useEffect(() => {
+    if (overviewData?.userGrowth) {
+      setState((prev) => ({
+        ...prev,
+        series: [{ name: 'User Growth', data: overviewData.userGrowth.data }],
+        options: {
+          ...prev.options,
+          xaxis: { categories: overviewData.userGrowth.categories },
+        },
+      }))
+    }
+  }, [overviewData])
+
+  const revenueCategories = overviewData?.revenue?.categories || [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+  ]
+  const revenueData = overviewData?.revenue?.revenue || [30, 40, 35, 50, 49, 60, 70, 91, 125]
+  const sponsorshipData = overviewData?.revenue?.sponsorship || [20, 25, 30, 35, 45, 50, 55, 65, 80]
+
   const [revenueState, setRevenueState] = useState({
     series: [
       {
         name: 'Revenue',
-        data: [30, 40, 35, 50, 49, 60, 70, 91, 125],
+        data: revenueData,
       },
       {
         name: 'Sponsorship',
-        data: [20, 25, 30, 35, 45, 50, 55, 65, 80],
+        data: sponsorshipData,
       },
     ],
     options: {
@@ -236,12 +254,12 @@ export default function Page() {
           enabled: false,
         },
       },
-      colors: ['#069769', '#F49E0C'], // First color for Revenue, second for Sponsorship
+      colors: ['#069769', '#F49E0C'],
       dataLabels: {
         enabled: false,
       },
       stroke: {
-        curve: 'smooth' as const, // 'smooth' looks better with multiple lines
+        curve: 'smooth' as const,
         width: 2,
       },
       title: {
@@ -255,7 +273,7 @@ export default function Page() {
         },
       },
       xaxis: {
-        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'],
+        categories: revenueCategories,
       },
       legend: {
         position: 'top' as const,
@@ -271,7 +289,23 @@ export default function Page() {
       },
     },
   })
-  // ...existing code...
+
+  // Update chart when overviewData changes
+  useEffect(() => {
+    if (overviewData?.revenue) {
+      setRevenueState((prev) => ({
+        ...prev,
+        series: [
+          { name: 'Revenue', data: overviewData.revenue.revenue },
+          { name: 'Sponsorship', data: overviewData.revenue.sponsorship },
+        ],
+        options: {
+          ...prev.options,
+          xaxis: { categories: overviewData.revenue.categories },
+        },
+      }))
+    }
+  }, [overviewData])
 
   const handlePageChange = (newPage: number) => {
     setPage(newPage)
@@ -301,77 +335,82 @@ export default function Page() {
         </div>
       </header>
       <div className="flex flex-1 flex-col gap-4 p-4 pt-2">
-        <div className="flex flex-col md:flex-row justify-between gap-5 items-center">
-          <PageTitle
-            title="Dashboard Overview"
-            subTitle="Welcome back! Here's what's happening with your platform."
-          />
-          <div className="flex flex-col md:flex-row gap-2 items-center justify-start md:justify-end">
-            <CustomButton
-              variant="outline"
-              className="border-gray-300 text-gray-700 hover:bg-gray-100 rounded-[15px] h-[41px]"
-              onClick={exportData}
-            >
-              <Download className="mr-2 h-4 w-4" />
-              Export Report
-            </CustomButton>
-            <Button icon={<ScanSearch />} text="View Users" action={addUser} width="170px" />
-          </div>
-        </div>
-
-        <div className="mt-5 gap-3 flex flex-col flex-wrap md:flex-row">
-          {(showAll ? cardData : cardData.slice(0, 4)).map((card, index) => (
-            <Card
-              key={index}
-              title={card.title}
-              header={card.header}
-              details={card.details}
-              iconSrc={card.iconSrc}
-            />
-          ))}
-
-          {cardData.length > 4 && (
-            <div className="flex items-center gap-4 mt-4 w-full">
-              <hr className="flex-1 border-gray-200" />
-
-              <CustomButton
-                variant="outline"
-                className="border-0 text-gray-700 hover:bg-gray-100 rounded-[15px] h-[41px] px-6 flex items-center gap-2 whitespace-nowrap"
-                onClick={() => setShowAll(!showAll)}
-              >
-                {showAll ? (
-                  <>
-                    <EyeOff size={18} />
-                    Show Less
-                  </>
-                ) : (
-                  <>
-                    <Eye size={18} />
-                    See More
-                  </>
-                )}
-              </CustomButton>
-
-              <hr className="flex-1 border-gray-200" />
+        {isOverviewLoading ? (
+          <Spinner loading={isOverviewLoading} />
+        ) : (
+          <>
+            <div className="flex flex-col md:flex-row justify-between gap-5 items-center">
+              <PageTitle
+                title="Dashboard Overview"
+                subTitle="Welcome back! Here's what's happening with your platform."
+              />
+              <div className="flex flex-col md:flex-row gap-2 items-center justify-start md:justify-end">
+                <CustomButton
+                  variant="outline"
+                  className="border-gray-300 text-gray-700 hover:bg-gray-100 rounded-[15px] h-[41px]"
+                  onClick={exportData}
+                >
+                  <Download className="mr-2 h-4 w-4" />
+                  Export Report
+                </CustomButton>
+                <Button icon={<ScanSearch />} text="View Users" action={addUser} width="170px" />
+              </div>
             </div>
-          )}
-        </div>
 
-        <div className="mt-5 flex flex-col md:flex-row gap-3 items-center">
-          <div className="border border-[#F2F2F2] w-full h-[355px] rounded-[20px] bg-transparent p-2">
-            {/* <p className="chart-title">User Growth</p> */}
-            <Chart options={state.options} series={state.series} type="area" height={300} />
-          </div>
-          <div className="border border-[#F2F2F2] w-full h-[355px] rounded-[20px] bg-transparent p-2">
-            {/* <p className="chart-title">Revenue & Sponsorship</p> */}
-            <Chart
-              options={revenueState.options}
-              series={revenueState.series}
-              type="area"
-              height={300}
-            />
-          </div>
-        </div>
+            <div className="mt-5 gap-3 flex flex-col flex-wrap md:flex-row">
+              {(showAll ? cardData : cardData.slice(0, 4)).map((card, index) => (
+                <Card
+                  key={index}
+                  title={card.title}
+                  header={card.header}
+                  details={card.details}
+                  iconSrc={card.iconSrc}
+                />
+              ))}
+              {cardData.length > 4 && (
+                <div className="flex items-center gap-4 mt-4 w-full">
+                  <hr className="flex-1 border-gray-200" />
+
+                  <CustomButton
+                    variant="outline"
+                    className="border-0 text-gray-700 hover:bg-gray-100 rounded-[15px] h-[41px] px-6 flex items-center gap-2 whitespace-nowrap"
+                    onClick={() => setShowAll(!showAll)}
+                  >
+                    {showAll ? (
+                      <>
+                        <EyeOff size={18} />
+                        Show Less
+                      </>
+                    ) : (
+                      <>
+                        <Eye size={18} />
+                        See More
+                      </>
+                    )}
+                  </CustomButton>
+
+                  <hr className="flex-1 border-gray-200" />
+                </div>
+              )}
+            </div>
+
+            <div className="mt-5 flex flex-col md:flex-row gap-3 items-center">
+              <div className="border border-[#F2F2F2] w-full h-[355px] rounded-[20px] bg-transparent p-2">
+                {/* <p className="chart-title">User Growth</p> */}
+                <Chart options={state.options} series={state.series} type="area" height={300} />
+              </div>
+              <div className="border border-[#F2F2F2] w-full h-[355px] rounded-[20px] bg-transparent p-2">
+                {/* <p className="chart-title">Revenue & Sponsorship</p> */}
+                <Chart
+                  options={revenueState.options}
+                  series={revenueState.series}
+                  type="area"
+                  height={300}
+                />
+              </div>
+            </div>
+          </>
+        )}
 
         <div className="mt-5">
           <div className="flex justify-between items-center mb-4">

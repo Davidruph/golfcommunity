@@ -67,9 +67,9 @@ const constraints = {
   lastName: {
     presence: true,
   },
-  phoneNumber: {
-    presence: true,
-  },
+  // phoneNumber: {
+  //   presence: true,
+  // },
   email: {
     presence: true,
     email: true,
