@@ -27,10 +27,8 @@ import type { FormApi } from 'final-form'
 import { useUsersQuery } from '@/service/data.service'
 import Textarea from '@/components/auth/Textarea'
 import ImageSelector from '@/components/auth/ImageSelector'
-import axios from 'axios'
 import { useSelector } from 'react-redux'
 import { showAlert } from '@/utils/showAlert'
-import enviroment from '@/configuration/siteConfig'
 import {
   useGetCampaignsQuery,
   useRegisterCampaignMutation,
