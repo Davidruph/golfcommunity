@@ -1,10 +1,9 @@
 import { fetchBaseQuery } from '@reduxjs/toolkit/query/react'
-import enviroment from '../configuration/siteConfig'
 import type { BaseQueryFn, FetchArgs, FetchBaseQueryError } from '@reduxjs/toolkit/query/react'
 import type { RootState } from '@/redux/store'
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: enviroment.API_BASE_URL,
+  baseUrl: process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3000/api/v1',
   prepareHeaders: (headers, { getState }) => {
     headers.set('Content-Type', 'application/json')
     const state = getState() as RootState
