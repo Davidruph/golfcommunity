@@ -468,14 +468,14 @@ export default function Page() {
                       community: selectedEvent.community
                         ? selectedEvent.community.toString()
                         : undefined,
-                      bannerImage: selectedEvent.banner_image,
+                      bannerImage: selectedEvent.banner_image ?? undefined,
                       eventDate: selectedEvent.event_date,
                       eventTime: selectedEvent.event_time,
                       totalAllowedSpots: selectedEvent.total_allowed_spots.toString(),
                       fees: selectedEvent.fees ? selectedEvent.fees.toString() : '',
                       courseName: selectedEvent.course_name,
                       location: selectedEvent.location,
-                      feeLink: selectedEvent.fee_link,
+                      feeLink: selectedEvent.fee_link ?? undefined,
                     }
                   : {}
               }
