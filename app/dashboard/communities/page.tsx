@@ -11,10 +11,21 @@ import { Separator } from '@/components/ui/separator'
 import { SidebarTrigger } from '@/components/ui/sidebar'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import Spinner from '@/components/website/loaders/Spinner'
-import { useGetCommunitiesQuery } from '@/service/community.service'
+import { useGetCommunitiesQuery, useJoinCommunityMutation } from '@/service/community.service'
 import { ListFilter, Search } from 'lucide-react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
+import Loader from '@/components/website/loaders/Loader'
+import { showAlert } from '@/utils/showAlert'
+import { getErrorMessage } from '@/utils/formatErrorResponse'
+import rtkMutation from '@/utils/rtkMutation'
 
 interface Community {
   id: string
@@ -37,6 +48,7 @@ export default function Page() {
   const tab = searchParams.get('tab') || 'all'
   const [filtersVal, setFiltersVal] = useState<Record<string, string>>({})
   const [page, setPage] = useState(1)
+  const [community, setCommunity] = useState<Community | null>(null)
 
   const handleTabChange = (value: string) => {
     router.push(`/dashboard/communities?tab=${value}`)
@@ -56,9 +68,28 @@ export default function Page() {
   }
 
   const handleJoinCommunity = (community: Community) => () => {
-    // Implement join community logic here
     console.log(`Joining community with ID: ${community.id}`)
+    setCommunity(community)
   }
+
+  const handleViewCommunity = (community: Community) => () => {
+    router.push(`/dashboard/communities/${community.id}`)
+  }
+
+  const [join, { isLoading: joinLoading, isSuccess, error }] = useJoinCommunityMutation()
+  const joinCommunity = (community: Community) => async () => {
+    console.log(`Confirmed joining community with ID: ${community.id}`)
+    await rtkMutation(join, community)
+  }
+
+  useEffect(() => {
+    if (isSuccess) {
+      showAlert('Community join successful!', 'success')
+      setCommunity(null)
+    } else if (error) {
+      showAlert(getErrorMessage(error), 'error')
+    }
+  }, [isSuccess, error])
 
   return (
     <>
@@ -123,6 +154,8 @@ export default function Page() {
                         imageUrl={community.banner_image}
                         action={handleJoinCommunity(community)}
                         memberCount={community.members_count}
+                        is_member={community.is_member}
+                        viewAction={handleViewCommunity(community)}
                       />
                     ))}
                 </div>
@@ -133,7 +166,7 @@ export default function Page() {
             <TabsContent value="member" className="mt-5">
               {communityData?.data?.filter((community: Community) => community.is_member == 1)
                 .length > 0 ? (
-                <div className="w-full flex flex-col md:flex-row gap-4 flex-wrap gap-4">
+                <div className="w-full flex flex-col md:flex-row flex-wrap gap-4">
                   {communityData?.data
                     ?.filter((community: Community) => community.is_member == 1)
                     .map((community: Community) => (
@@ -144,6 +177,8 @@ export default function Page() {
                         imageUrl={community.banner_image}
                         action={handleJoinCommunity(community)}
                         memberCount={community.members_count}
+                        is_member={community.is_member}
+                        viewAction={handleViewCommunity(community)}
                       />
                     ))}
                 </div>
@@ -154,6 +189,25 @@ export default function Page() {
           </Tabs>
         )}
       </div>
+
+      <Dialog open={!!community} onOpenChange={() => setCommunity(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Are you absolutely sure?</DialogTitle>
+            <DialogDescription className="flex flex-col gap-2">
+              Are you sure you want to join the community &quot;{community?.name}&quot;?
+              <button
+                type="submit"
+                className="auth-submit w-full h-[49px] py-1 px-2 mt-5 cursor-pointer"
+                onClick={joinCommunity(community as Community)}
+                disabled={joinLoading}
+              >
+                {joinLoading ? <Loader /> : 'Yes, Join Community'}
+              </button>
+            </DialogDescription>
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
     </>
   )
 }

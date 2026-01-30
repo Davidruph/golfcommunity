@@ -8,6 +8,8 @@ type CommunityListCardProps = {
   memberCount: number
   imageUrl?: string
   action?: () => void
+  is_member?: number
+  viewAction?: () => void
 }
 const CommunityListCard = ({
   title,
@@ -15,6 +17,8 @@ const CommunityListCard = ({
   memberCount,
   imageUrl,
   action,
+  is_member,
+  viewAction,
 }: CommunityListCardProps) => {
   return (
     <div className="border border-[#EAECF0] w-full max-w-[352px] p-[16px] flex flex-col gap-2">
@@ -29,9 +33,16 @@ const CommunityListCard = ({
       <p className="community-list-desc">{description}</p>
       <div className="flex items-center justify-between w-full">
         <p className="community-list-count">{memberCount} Members</p>
-        <p className="community-list-join">
-          <Button onClick={action}>Join</Button>
-        </p>
+
+        {is_member == 0 ? (
+          <p className="community-list-join">
+            <Button onClick={action}>Join</Button>
+          </p>
+        ) : (
+          <Button onClick={viewAction} variant="outline">
+            View
+          </Button>
+        )}
       </div>
     </div>
   )

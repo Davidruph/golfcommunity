@@ -1,5 +1,5 @@
 import apiSlice from './apiSlice'
-import { COMMUNITIES, COMMUNITY_CAPTAINS } from './constants'
+import { COMMUNITIES, COMMUNITY_CAPTAINS, JOIN_COMMUNITY } from './constants'
 
 const userApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
@@ -72,6 +72,21 @@ const userApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ['community'],
     }),
+    joinCommunity: builder.mutation({
+      query: (communityData) => ({
+        url: JOIN_COMMUNITY,
+        method: 'POST',
+        body: communityData,
+      }),
+      invalidatesTags: ['community'],
+    }),
+    getCommunityById: builder.query({
+      query: (id) => ({
+        url: COMMUNITIES + `/${id}`,
+        method: 'GET',
+      }),
+      providesTags: ['community'],
+    }),
   }),
 })
 
@@ -82,4 +97,6 @@ export const {
   useToggleCommunityStatusMutation,
   useGetCommunityCaptainsQuery,
   useToggleCommunityCaptainStatusMutation,
+  useJoinCommunityMutation,
+  useGetCommunityByIdQuery,
 } = userApiSlice
