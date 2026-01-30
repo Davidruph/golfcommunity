@@ -39,7 +39,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
       return NextResponse.json({ error: 'Community not found' }, { status: 404 })
     }
 
-    return NextResponse.json({ community: community[0] }, { status: 200 })
+    return NextResponse.json({ data: community[0] }, { status: 200 })
   } catch (err: unknown) {
     connection.release()
     console.error('Community fetch error:', err)

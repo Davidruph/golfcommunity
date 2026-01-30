@@ -122,16 +122,20 @@ export default function Page() {
       </header>
       <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
         <div
-          className="w-full h-[257px] p-[16px] border border-[#EAECF0] mb-2"
+          className="w-full h-[257px] p-[16px] border border-[#EAECF0] mb-2 relative"
           style={{
             backgroundImage: "url('/dashboard/sponsorship.png')",
             backgroundSize: 'cover',
             backgroundPosition: 'center',
           }}
         >
-          <div className="flex flex-col justify-between h-full text-white">
+          {/* Overlay */}
+          <div className="absolute inset-0 bg-black/50 z-0" />
+          {/* Content */}
+          <div className="flex flex-col justify-between h-full text-white relative z-10">
             <p className="sponsorship-title">G4C Community</p>
-            <div className="flex justify-between items-end">
+
+            <div className="flex justify-between items-end gap-4">
               <p className="sponsorship-join-text w-full">
                 Sponsor a <br /> Junior Golfer
               </p>
